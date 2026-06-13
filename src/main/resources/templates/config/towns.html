@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Towns</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <th:block th:replace="~{fragments/header :: header-css}"></th:block>
+</head>
+<body><div th:replace="fragments/header :: header"></div>
+
+<h2>Towns</h2>
+
+<div th:if="${success}" th:text="${success}" style="color:green;"></div>
+
+<form th:action="@{/config/towns/save}" th:object="${town}" method="post">
+    <input type="text" th:field="*{name}" placeholder="Town name" required/>
+
+    <select th:field="*{region}" required>
+        <option value="">-- Select Region --</option>
+
+        <option th:each="r : ${regions}"
+                th:value="${r.id}"
+                th:text="${r.name}">
+        </option>
+    </select>
+
+    <button type="submit">Add Town</button>
+</form>
+
+<table>
+    <thead>
+    <tr><th>ID</th><th>Name</th><th>Region</th></tr>
+    </thead>
+    <tbody>
+    <tr th:each="t : ${towns}">
+        <td th:text="${t.id}"></td>
+        <td th:text="${t.name}"></td>
+        <td th:text="${t.region.name}"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

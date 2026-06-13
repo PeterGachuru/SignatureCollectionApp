@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Add Manual Payment</title>
+    <th:block th:replace="~{fragments/header :: header-css}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+
+<body>
+
+<div th:replace="fragments/header :: header"></div>
+
+<h2>Add Manual Payment</h2>
+
+<form th:action="@{/admin/payments/save}"
+      th:object="${paymentInProgress}"
+      method="post">
+
+    <input type="hidden"
+           name="customerId"
+           id="customerId"
+           th:value="${paymentInProgress.customer != null ? paymentInProgress.customer.id : ''}"/>
+
+    <input type="text"
+           id="customerName"
+           readonly
+           th:value="${paymentInProgress.customer != null ? paymentInProgress.customer.businessName : ''}"/>
+
+
+    <button type="button" onclick="openCustomerModal()">Select Customer</button>
+
+    <br/><br/>
+
+    <label>Credit Sale (optional)</label>
+    <select name="creditSaleId">
+        <option value="">-- Not specific --</option>
+
+        <option th:each="cs : ${creditSales}"
+                th:value="${cs.id}"
+                th:text="${'Sale #' + cs.id + ' - Balance ' + cs.balance}"
+                th:selected="${paymentInProgress.creditSale != null and cs.id == paymentInProgress.creditSale.id}">
+        </option>
+    </select>
+
+    <br/><br/>
+
+    <!-- 🔔 UNALLOCATED FUNDS WARNING -->
+    <div th:if="${unallocatedAmount > 0}"
+         style="background:#fff3cd; border:1px solid #ffeeba; padding:12px; margin-bottom:15px; border-radius:4px;">
+
+        <strong>⚠ Unallocated Funds Available</strong><br/>
+
+        Customer has
+        <b th:text="${#numbers.formatDecimal(unallocatedAmount,1,'COMMA',2,'POINT')}"></b>
+        available from previous payments.
+
+        <br/><br/>
+
+        <button type="button"
+                onclick="applyUnallocated()"
+                style="padding:6px 12px; background:#007bff; color:white; border:none; border-radius:4px;">
+            Clear from Unallocated Amount
+        </button>
+    </div>
+
+
+    <label>Amount *</label>
+    <input type="number" th:field="*{amount}" step="0.01" required/>
+
+    <br/><br/>
+
+    <label>Payment Mode *</label>
+    <select th:field="*{paymentMode}" required>
+        <option th:each="m : ${paymentModes}"
+                th:value="${m}"
+                th:text="${m}">
+        </option>
+    </select>
+
+    <br/><br/>
+
+    <label>Phone Number</label>
+    <input type="text" th:field="*{phoneNumber}" />
+
+    <br/><br/>
+
+    <label>Reference</label>
+    <input type="text" th:field="*{reference}" />
+
+    <br/><br/>
+
+    <label>Payment Date</label>
+    <input type="date" th:field="*{paymentDate}" />
+
+    <br/><br/>
+
+    <button type="submit">Save Payment</button>
+
+</form>
+
+
+<script th:inline="javascript">
+    function applyUnallocated() {
+        const unallocated = [[${unallocatedAmount}]];
+        const balance = [[${paymentInProgress.creditSale != null ? paymentInProgress.creditSale.balance : 0}]];
+
+        const amountToApply = Math.min(unallocated, balance);
+
+        document.querySelector("input[name='amount']").value = amountToApply;
+
+        alert(
+            "Applied " + amountToApply +
+            " from unallocated funds to this credit sale."
+        );
+    }
+</script>
+
+
+<div th:replace="fragments/customer-modal :: customerModal(${customers})"></div>
+
+</body>
+</html>

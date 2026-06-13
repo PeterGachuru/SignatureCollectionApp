@@ -1,0 +1,120 @@
+/* =========================
+   Layout Container
+   ========================= */
+.dashboard-container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 14px 18px;
+}
+
+/* =========================
+   Header
+   ========================= */
+.dashboard-header {
+    margin-bottom: 12px;
+}
+
+.dashboard-header h2 {
+    margin: 0;
+    font-size: 1.4rem;
+}
+
+.subtitle {
+    font-size: 0.85rem;
+    color: #777;
+    margin-top: 2px;
+}
+
+/* =========================
+   Sections
+   ========================= */
+.section {
+    margin-bottom: 18px;
+}
+
+h3 {
+    font-size: 1rem;
+    margin-bottom: 10px;
+}
+
+/* =========================
+   Cards (COMPACT)
+   ========================= */
+.dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+}
+
+.card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 12px 10px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transition: all 0.15s ease;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+}
+
+.card h4 {
+    font-size: 0.75rem;
+    color: #888;
+    margin-bottom: 6px;
+}
+
+.card p {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+/* Card Variants */
+.card.highlight {
+    border-left: 4px solid #1976d2;
+}
+.card.warning {
+    border-left: 4px solid #f57c00;
+}
+.card.success {
+    border-left: 4px solid #2e7d32;
+}
+
+/* =========================
+   Table (COMPACT)
+   ========================= */
+.table-container {
+    background: #fff;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background: #f5f7fa;
+}
+
+th, td {
+    padding: 8px 8px;
+    font-size: 0.85rem;
+}
+
+th {
+    font-size: 0.75rem;
+    color: #666;
+}
+
+tbody tr {
+    border-top: 1px solid #eee;
+}
+
+tbody tr:hover {
+    background: #f9fbfd;
+}

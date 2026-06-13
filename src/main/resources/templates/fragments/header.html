@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!-- ===== HEADER CSS FRAGMENT ===== -->
+<head th:fragment="header-css">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .header {
+            background-color: #004080;
+            color: white;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-weight: bold;
+            font-size: 1.25em;
+        }
+
+        .nav {
+            display: flex;
+            gap: 12px;
+        }
+
+        .nav a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+        }
+
+        .nav a:hover {
+            background-color: #0066cc;
+        }
+
+        .dropdown {
+            position: relative;
+        }
+
+        .dropbtn {
+            cursor: pointer;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: #004080;
+            min-width: 180px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+
+        .dropdown-content a {
+            padding: 10px 14px;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+    </style>
+</head>
+
+<!-- ===== HEADER HTML FRAGMENT ===== -->
+<body>
+<div th:fragment="header">
+    <div class="header">
+        <div class="logo">
+            <a th:href="@{/}" style="color:white; text-decoration:none;">Signature Care Collection App</a>
+        </div>
+
+        <div class="nav">
+            <a th:href="@{/admin/customers/list}">Customers</a>
+            <a th:href="@{/credit-sales/list}">Credit Sales</a>
+            <a th:href="@{/admin/payments}">Payments</a>
+            <a th:href="@{/config}">Configs</a>
+            <a th:href="@{/admin/users}">Users</a>
+            <span  th:if="${#authentication != null and #authorization.expression('isAuthenticated()')}">
+                <span>
+                     <a th:text="${#authentication.name}" th:href="@{/profile}" style="color:white; text-decoration:none;">Username</a></span> |
+                <form th:action="@{/logout}" method="post" style="display:inline;">
+                    <button type="submit" style="background:none; border:none; color:white; cursor:pointer; font-weight:bold;">
+                        Logout
+                    </button>
+                </form>
+            </span>
+            <span th:if="${#authentication == null or !#authorization.expression('isAuthenticated()')}">
+                <a th:href="@{/login}" style="color:white; text-decoration:none;">Login</a>
+            </span>
+        </div>
+    </div>
+</div>
+</body>
+</html>

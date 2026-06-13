@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Configurations</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <th:block th:replace="~{fragments/header :: header-css}"></th:block>
+</head>
+<body><div th:replace="fragments/header :: header"></div>
+
+<h2>Configurations</h2>
+
+<ul>
+    <li><a th:href="@{/config/regions}">Manage Regions</a></li>
+    <li><a th:href="@{/config/towns}">Manage Towns</a></li>
+    <li><a th:href="@{/config/units}">Manage Customer Units</a></li>
+
+    <li><hr/></li>
+    <li><a th:href="@{/config/debt-classifications}">Debt Classifications</a></li>
+</ul>
+
+</body>
+</html>

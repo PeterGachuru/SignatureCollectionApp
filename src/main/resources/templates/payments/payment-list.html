@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Payments</title>
+    <th:block th:replace="~{fragments/header :: header-css}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+
+    <style>
+        table.allow { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #ddd; padding: 8px; }
+        th { background: #f4f4f4; }
+        tr:hover { background: #f9f9f9; }
+        input { padding: 6px; width: 300px; }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #ddd;
+
+             /* FIX 👇 */
+            color: #555;              /* visible when inactive */
+
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-weight: bold;
+        }
+
+        .tab.active {
+            border-bottom: 3px solid #4CAF50;
+            color: #4CAF50;
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
+
+    <script>
+        function showTab(tabId) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+            document.getElementById(tabId + '-tab').classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+
+            document.getElementById("search").value = "";
+        }
+
+        function searchPayment() {
+            let filter = document.getElementById("search").value.toLowerCase();
+            document.querySelectorAll(".tab-content.active .payment-row").forEach(row => {
+                row.style.display = row.innerText.toLowerCase().includes(filter) ? "" : "none";
+            });
+        }
+    </script>
+</head>
+
+<body onload="showTab('in-progress')">
+
+<div th:replace="fragments/header :: header"></div>
+
+<h2>Payments</h2>
+
+<div class="tabs">
+    <button id="in-progress-tab" class="tab"
+            onclick="showTab('in-progress')">
+        ⏳ In-Progress Payments
+    </button>
+
+    <button id="posted-tab" class="tab"
+            onclick="showTab('posted')">
+        ✅ Posted Payments
+    </button>
+</div>
+
+<div style="margin-bottom: 15px; display:flex; justify-content: space-between;">
+    <input type="text" id="search"
+           onkeyup="searchPayment()"
+           placeholder="Search customer, phone, reference..." />
+
+    <a th:href="@{/admin/payments/new}"
+       class="btn btn-primary"
+       style="padding:6px 12px; background:#4CAF50; color:white; border-radius:4px;">
+        + Add Manual Payment
+    </a>
+</div>
+
+<!-- ================= IN PROGRESS ================= -->
+<div id="in-progress" class="tab-content">
+    <table>
+        <thead>
+        <tr>
+            <th>Date</th>
+            <th>Customer</th>
+            <th>Phone</th>
+            <th>Amount</th>
+            <th>Mode</th>
+            <th>Reference</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="p : ${inProgressPayments}" class="payment-row">
+            <td th:text="${p.createdAt}"></td>
+            <td th:text="${p.customer.businessName}"></td>
+            <td th:text="${p.phoneNumber}"></td>
+            <td th:text="${#numbers.formatDecimal(p.amount,1,'COMMA',2,'POINT')}"></td>
+            <td th:text="${p.paymentMode}"></td>
+            <td th:text="${p.reference}"></td>
+            <td>
+                <form th:action="@{'/admin/payments/post/' + ${p.id}}"
+                      method="post"
+                      style="display:inline;">
+                    <button type="submit"
+                            class="btn btn-success"
+                            onclick="return confirm('Post this payment?');">
+                        Post
+                    </button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- ================= POSTED ================= -->
+<div id="posted" class="tab-content">
+    <table>
+        <thead>
+        <tr>
+            <th>Date</th>
+            <th>Customer</th>
+            <th>Phone</th>
+            <th>Paid Amount</th>
+            <th>Unallocated Amount</th>
+            <th>Mode</th>
+            <th>Reference</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="p : ${payments}" class="payment-row">
+            <td th:text="${p.paymentDate}"></td>
+            <td th:text="${p.customer.businessName}"></td>
+            <td th:text="${p.phoneNumber}"></td>
+            <td th:text="${#numbers.formatDecimal(p.amount,1,'COMMA',2,'POINT')}"></td>
+            <td th:text="${#numbers.formatDecimal(p.unallocatedAmount,1,'COMMA',2,'POINT')}"></td>
+            <td th:text="${p.paymentMode}"></td>
+            <td th:text="${p.reference}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

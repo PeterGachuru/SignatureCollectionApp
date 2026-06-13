@@ -1,0 +1,338 @@
+/* style.css */
+
+/* General body styles */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+}
+
+/* Header fragment styling */
+.header {
+    background-color: #004080;
+    color: white;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header a {
+    color: white;
+    text-decoration: none;
+    padding: 8px 12px;
+}
+
+.header a:hover {
+    background-color: #0066cc;
+    border-radius: 4px;
+}
+
+.nav {
+    display: flex;
+    gap: 10px;
+}
+
+/* Dropdown */
+.dropdown {
+    position: relative;
+}
+
+.dropbtn {
+    cursor: pointer;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #004080;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    padding: 8px 12px;
+    display: block;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* Table Cells */
+/* Tables - Improved Styling with Lighter Header */
+table {
+    border-collapse: collapse;
+    width: auto;
+    max-width: 100%;
+    margin-left: 20px;
+    margin-right: 20px;
+    font-size: 14px;
+    table-layout: auto;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+/* Table Header */
+table th {
+    background-color: #6699cc; /* lighter blue */
+    color: #fff;
+    font-weight: bold;
+    padding: 6px 10px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+/* Table Cells */
+table td {
+    border: 1px solid #ccc;
+    padding: 6px 10px;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+}
+
+/* Optional: subtle row striping */
+table tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
+}
+
+/* Table container for responsive horizontal scrolling */
+.table-container {
+    overflow-x: auto;
+    padding: 5px 0;
+}
+
+/* Table caption (optional) */
+table caption {
+    caption-side: top;
+    text-align: left;
+    font-weight: bold;
+    padding-bottom: 5px;
+}
+
+
+
+/* Buttons */
+button {
+    background-color: #004080;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+button:hover {
+    background-color: #0066cc;
+}
+
+/* Links inside table */
+a {
+    color: #004080;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Form inputs */
+input[type="text"], textarea, select {
+    width: 300px; /* limit input width */
+    max-width: 100%; /* responsive */
+    padding: 6px;
+    margin: 5px 0 15px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+/* Textareas can be slightly bigger but not full width */
+textarea {
+    width: 400px;
+    max-width: 100%;
+    height: 80px;
+}
+
+/* New button class */
+.btn-new {
+    background-color: #004080;
+    color: white;
+    padding: 8px 16px;
+    text-decoration: none;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    display: inline-block;
+}
+
+.btn-new:hover {
+    background-color: #0066cc;
+}
+
+.drag-handle {
+    cursor: grab;
+    user-select: none;
+    margin-right: 8px;
+}
+
+
+.child-row {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.child-row.dragging {
+    opacity: 0.5;
+}
+
+.btn-delete {
+    background-color: #c62828;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-delete:hover {
+    background-color: #e53935;
+}
+
+/* Flex-based form layout */
+.form-row {
+    display: flex;
+    flex-wrap: wrap; /* wrap on smaller screens */
+    gap: 20px;
+    margin-bottom: 15px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    flex: 1; /* evenly divide space */
+    min-width: 200px; /* prevent inputs from being too small */
+}
+
+.form-group.full-width {
+    flex: 1 1 100%; /* span full row */
+}
+
+/* Optional: adjust textareas for full width inside flex group */
+textarea {
+    width: 100%;
+    min-height: 80px;
+}
+
+/* Inputs + selects take full width in their flex box */
+input[type="text"], select {
+    width: 100%;
+}
+
+.advanced-section {
+    display: none;
+    margin-top: 10px;
+}
+
+.advanced-toggle {
+    cursor: pointer;
+    color: #0a58ca;
+    user-select: none;
+    margin-top: 20px;
+}
+
+.advanced-toggle:hover {
+    text-decoration: underline;
+}
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-box {
+    background: #fff;
+    width: 600px;
+    max-height: 80vh;
+    overflow: auto;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.child-list {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-top: 10px;
+}
+
+.child-item {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+}
+
+.child-item:hover {
+    background: #f5f7fa;
+}
+
+.child-item .meta {
+    font-size: 12px;
+    color: #666;
+}
+.clear-child-btn {
+    margin-left: 6px;
+    display: none;
+}
+
+.child-row .child-id:not([value=""]) ~ .clear-child-btn {
+    display: inline;
+}
+
+.flow-arrow-vertical {
+    display: flex;
+    align-items: center;
+    align-items: center;     /* center arrows themselves */
+    margin: 0 auto;         /* center the whole block horizontally */
+    gap: 6px;
+    padding: 20px 40px;
+}
+
+.flow-arrow-horizontal {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 8px;
+    padding: 40px 20px;
+}
+
+.arrow-down, .arrow-right {
+    font-size: 20px;
+}
+
+.arrow-up, .arrow-left {
+    font-size: 20px;
+    color: green;
+}
+
+
+.tab-actions {
+    margin: 8px 0 12px 0;
+}
+
+.tab-actions a {
+    font-weight: 400;
+    text-decoration: none;
+    color: #007bff;
+}
+
+.tab-actions a:hover {
+    text-decoration: underline;
+}

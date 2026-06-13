@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Customer Dashboard</title>
+    <th:block th:replace="~{fragments/header :: header-css}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+
+<div th:replace="~{fragments/customer_header :: header}"></div>
+
+<h2>Welcome to Your Dashboard</h2>
+
+<div style="display:flex; gap:20px;">
+
+    <div>
+        <h3>Total Pending Payments</h3>
+        <p th:text="${dashboard.totalPending}">0</p>
+    </div>
+
+    <div>
+        <h3>Total Overpayments</h3>
+        <p th:text="${dashboard.totalOverpayments}">0</p>
+    </div>
+
+    <div>
+        <h3>Outstanding Credit Sales</h3>
+        <p th:text="${dashboard.outstandingSalesCount}">0</p>
+    </div>
+
+</div>
+
+<hr/>
+
+<h3>Recent Payments</h3>
+
+<table border="1">
+    <tr>
+        <th>Date</th>
+        <th>Amount</th>
+        <th>Unallocated</th>
+    </tr>
+
+    <tr th:each="p : ${dashboard.recentPayments}">
+        <td th:text="${#temporals.format(p.paymentDate, 'dd-MM-yyyy HH:mm')}"></td>
+        <td th:text="${p.amount}"></td>
+        <td th:text="${p.unallocatedAmount}"></td>
+    </tr>
+</table>
+
+<hr/>
+
+<h3>Recent Purchases</h3>
+
+<table border="1">
+    <tr>
+        <th>Sale #</th>
+        <th>Total Amount</th>
+        <th>Balance</th>
+        <th>Status</th>
+    </tr>
+
+    <tr th:each="cs : ${dashboard.recentPurchases}">
+        <td th:text="${cs.id}"></td>
+        <td th:text="${cs.invoiceAmount}"></td>
+        <td th:text="${cs.balance}"></td>
+        <td>
+            <span th:if="${cs.balance > 0}">Pending</span>
+            <span th:if="${cs.balance == 0}">Cleared</span>
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

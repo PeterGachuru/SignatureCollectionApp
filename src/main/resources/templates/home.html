@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Dashboard</title>
+    <th:block th:replace="~{fragments/header :: header-css}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}" />
+</head>
+<body>
+
+<div th:replace="fragments/header :: header"></div>
+
+<div class="dashboard-container">
+
+    <!-- HEADER -->
+    <div class="dashboard-header">
+        <div>
+            <h2>Dashboard</h2>
+            <p class="subtitle" th:text="${message}">Welcome to Signature Care Collection App</p>
+        </div>
+    </div>
+
+    <!-- CUSTOMER SUMMARY -->
+    <div class="section">
+        <h3>Customers Overview</h3>
+
+        <div class="dashboard-cards">
+            <div class="card highlight">
+                <h4>Total Customers</h4>
+                <p th:text="${summary.totalCustomers}">0</p>
+            </div>
+
+            <div class="card">
+                <h4>Active (90d)</h4>
+                <p th:text="${summary.activeCustomers90Days}">0</p>
+            </div>
+
+            <div class="card">
+                <h4>Payments (90d)</h4>
+                <p th:text="${#numbers.formatDecimal(summary.totalPayments90Days,1,'COMMA',2,'POINT')}">0</p>
+            </div>
+
+            <div class="card warning">
+                <h4>Pending</h4>
+                <p th:text="${summary.totalPendingPayments}">0</p>
+            </div>
+
+            <div class="card success">
+                <h4>Overpayments</h4>
+                <p th:text="${summary.totalOverpayments}">0</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- DEBT SUMMARY -->
+    <div class="section">
+        <h3>Debt Classification</h3>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                <tr>
+                    <th>Classification</th>
+                    <th>Min Days</th>
+                    <th>Loans</th>
+                    <th>Total Balance</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="c : ${summary.classificationSummary}">
+                    <td th:text="${c.classificationName}"></td>
+                    <td th:text="${c.minDaysLate}"></td>
+                    <td th:text="${c.count}"></td>
+                    <td th:text="${#numbers.formatDecimal(c.totalAmount,1,'COMMA',2,'POINT')}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

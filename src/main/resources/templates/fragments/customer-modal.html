@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="customerModal(customers)">
+
+    <!-- Modal Styles -->
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background: #fff;
+            width: 80%;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 6px;
+        }
+
+        .customer-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .customer-table th,
+        .customer-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        .customer-table th {
+            background: #f4f4f4;
+        }
+
+        .customer-table tr:hover {
+            background: #f9f9f9;
+        }
+
+        .modal-actions {
+            text-align: right;
+            margin-top: 10px;
+        }
+    </style>
+
+    <!-- Modal -->
+    <div id="customerModal" class="modal">
+        <div class="modal-content">
+            <h3>Select Customer</h3>
+
+            <input type="text"
+                   id="customerSearch"
+                   placeholder="Search by name, code, phone..."
+                   onkeyup="searchCustomerModal()">
+
+            <table class="customer-table">
+                <thead>
+                <tr>
+                    <th>Business Name</th>
+                    <th>Code</th>
+                    <th>Username</th>
+                    <th>Phone</th>
+                    <th>Location</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="c : ${customers}" class="customer-row">
+                    <td th:text="${c.businessName}"></td>
+                    <td th:text="${c.customerCode}"></td>
+                    <td th:text="${c.username}"></td>
+                    <td th:text="${c.phone}"></td>
+                    <td th:text="${c.location}"></td>
+                    <td>
+                        <button type="button"
+                                class="select-customer-btn"
+                                th:attr="data-id=${c.id}, data-name=${c.businessName}">
+                            Select
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="modal-actions">
+                <button type="button" onclick="closeCustomerModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal JS (self-contained) -->
+    <script>
+        function openCustomerModal() {
+            document.getElementById("customerModal").style.display = "block";
+        }
+
+        function closeCustomerModal() {
+            document.getElementById("customerModal").style.display = "none";
+        }
+
+        function selectCustomer(id, name) {
+            document.getElementById("customerId").value = id;
+            document.getElementById("customerName").value = name;
+            closeCustomerModal();
+        }
+
+        function searchCustomerModal() {
+            const filter = document.getElementById("customerSearch").value.toLowerCase();
+            document.querySelectorAll("#customerModal .customer-row").forEach(row => {
+                row.style.display = row.innerText.toLowerCase().includes(filter) ? "" : "none";
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            document.querySelectorAll(".select-customer-btn").forEach(btn => {
+                btn.addEventListener("click", function () {
+                    selectCustomer(this.dataset.id, this.dataset.name);
+                });
+            });
+        });
+    </script>
+
+</div>
+
+</body>
+</html>
