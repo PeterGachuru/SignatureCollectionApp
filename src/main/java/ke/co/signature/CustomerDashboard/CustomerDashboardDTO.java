@@ -1,7 +1,7 @@
 package ke.co.signature.CustomerDashboard;
 
 import ke.co.signature.CreditSale.CreditSale;
-import ke.co.signature.Payment.Payment;
+import ke.co.signature.Payment.PostedPayment;
 import lombok.Builder;
 import lombok.Data;
 
@@ -15,7 +15,7 @@ public class CustomerDashboardDTO {
     private BigDecimal totalPending;
     private BigDecimal totalOverpayments;
     private long outstandingSalesCount;
-    private List<Payment> recentPayments;
+    private List<PostedPayment> recentPostedPayments;
     private List<CreditSale> recentPurchases;
 }
 

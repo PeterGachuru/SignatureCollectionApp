@@ -10,6 +10,8 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import java.io.IOException;
 import java.util.Collection;
 
+import static ke.co.signature.Auth.Role.RoleValue.*;
+
 public class RoleBasedAuthSuccessHandler implements AuthenticationSuccessHandler {
 
     @Override
@@ -18,15 +20,20 @@ public class RoleBasedAuthSuccessHandler implements AuthenticationSuccessHandler
             HttpServletResponse response,
             Authentication authentication
     ) throws IOException, ServletException {
-
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 
         String redirectUrl = "/";
 
-        if (authorities.stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+        if (authorities.stream().anyMatch(a -> a.getAuthority().equals(ROLE_ADMIN.name()))) {
+            System.out.println("redirect to /");
             redirectUrl = "/";
-        } else if (authorities.stream().anyMatch(a -> a.getAuthority().equals("CUSTOMER_ADMIN"))) {
+        } else if (authorities.stream().anyMatch(a -> a.getAuthority().equals(ROLE_CUSTOMER_ADMIN.name()))) {
+            System.out.println("redirect to /customer/dashboard");
             redirectUrl = "/customer/dashboard";
+        } else if (authorities.stream().anyMatch(a -> a.getAuthority().equals(ROLE_REGIONAL_REP.name()))) {
+            System.out.println("redirect to /manager/dashboard");
+            redirectUrl = "/";
+//            redirectUrl = "/manager/dashboard";
         }
 
         response.sendRedirect(redirectUrl);

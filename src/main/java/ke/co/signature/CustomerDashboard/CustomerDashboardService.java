@@ -22,7 +22,7 @@ public class CustomerDashboardService {
                 .outstandingSalesCount(
                         creditSaleRepo.countByCustomer_UsernameAndBalanceGreaterThan(
                                 username, BigDecimal.ZERO))
-                .recentPayments(
+                .recentPostedPayments(
                         paymentRepo.findTop5ByCustomer_UsernameOrderByPaymentDateDesc(username))
                 .recentPurchases(
                         creditSaleRepo.findTop5ByCustomer_UsernameOrderByIdDesc(username))

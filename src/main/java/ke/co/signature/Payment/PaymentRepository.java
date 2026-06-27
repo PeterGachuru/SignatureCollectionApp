@@ -10,41 +10,41 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-public interface PaymentRepository extends JpaRepository<Payment, Long> {
+public interface PaymentRepository extends JpaRepository<PostedPayment, Long> {
 
     // ✅ For dashboard: payments in last N days
-    List<Payment> findByPaymentDateAfter(LocalDate date);
+    List<PostedPayment> findByPaymentDateAfter(LocalDate date);
 
     // ✅ Payments by customer
-    List<Payment> findByCustomer(Customer customer);
+    List<PostedPayment> findByCustomer(Customer customer);
 
     // ✅ Payments for a specific credit sale
-    List<Payment> findByCreditSaleId(Long creditSaleId);
+    List<PostedPayment> findByCreditSaleId(Long creditSaleId);
 
-    List<Payment> findAllByOrderByPaymentDateDesc();
+    List<PostedPayment> findAllByOrderByPaymentDateDesc();
 
 
     @Query("""
         SELECT COALESCE(SUM(p.unallocatedAmount), 0)
-        FROM Payment p
+        FROM PostedPayment p
         WHERE p.unallocatedAmount > 0
     """)
     BigDecimal getTotalOverpayments();
 
     @Query("""
     select coalesce(sum(p.unallocatedAmount), 0)
-    from Payment p
+    from PostedPayment p
     where p.customer.id = :customerId
 """)
     Optional<BigDecimal> sumUnallocatedByCustomer(@Param("customerId") Long customerId);
 
     @Query("""
         SELECT COALESCE(SUM(p.unallocatedAmount), 0)
-        FROM Payment p
+        FROM PostedPayment p
         WHERE p.customer.username = :username
         AND p.unallocatedAmount > 0
     """)
     BigDecimal totalOverpayments(String username);
 
-    List<Payment> findTop5ByCustomer_UsernameOrderByPaymentDateDesc(String username);
+    List<PostedPayment> findTop5ByCustomer_UsernameOrderByPaymentDateDesc(String username);
 }

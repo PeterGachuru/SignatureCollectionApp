@@ -1,9 +1,11 @@
 package ke.co.signature.CreditSale;
 
+import ke.co.signature.Auth.Role.RoleValue;
+import ke.co.signature.Auth.User.UserService;
 import ke.co.signature.Customer.Customer;
 import ke.co.signature.Customer.CustomerRepository;
 import ke.co.signature.DebtClassification.DebtClassification;
-import ke.co.signature.Payment.Payment;
+import ke.co.signature.Payment.PostedPayment;
 import ke.co.signature.Payment.PaymentSplit.PaymentSplit;
 import ke.co.signature.Payment.PaymentSplit.PaymentSplitDTO;
 import ke.co.signature.Payment.PaymentSplit.PaymentSplitRepository;
@@ -28,11 +30,11 @@ import java.util.Map;
 @Service
 @AllArgsConstructor
 public class CreditSaleService {
-
     private final CreditSaleRepository creditSaleRepository;
     private final CustomerRepository customerRepository;
     private final PaymentSplitRepository paymentSplitRepository;
     private final CreditSaleClassificationService classificationService;
+    private final UserService userService;
 
     public CreditSale createCreditSale(Long customerId,
                                        BigDecimal grossAmount,
@@ -76,7 +78,7 @@ public class CreditSaleService {
 
         // Map splits → DTO
         List<PaymentSplitDTO> splitDTOs = splits.stream().map(ps -> {
-            Payment p = ps.getPayment();
+            PostedPayment p = ps.getPostedPayment();
 
             PaymentSplitDTO dto = new PaymentSplitDTO();
             dto.setId(ps.getId());
@@ -287,6 +289,11 @@ public class CreditSaleService {
         customer.setLocation(null);
 
         customer.setActive(true);
+
+        userService.createUser(customer.getUsername(),
+                userService.generateEasyPassword(customer.getUsername()),
+                RoleValue.ROLE_CUSTOMER_ADMIN
+        );
 
         return customerRepository.save(customer);
     }

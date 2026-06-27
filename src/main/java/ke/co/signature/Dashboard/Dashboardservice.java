@@ -3,7 +3,7 @@ package ke.co.signature.Dashboard;
 import ke.co.signature.Customer.CustomerRepository;
 import ke.co.signature.CreditSale.CreditSale;
 import ke.co.signature.CreditSale.CreditSaleRepository;
-import ke.co.signature.Payment.Payment;
+import ke.co.signature.Payment.PostedPayment;
 import ke.co.signature.Payment.PaymentInProgress.PaymentInProgressRepository;
 import ke.co.signature.Payment.PaymentRepository;
 import org.springframework.stereotype.Service;
@@ -69,7 +69,7 @@ public class Dashboardservice {
         // ✅ Payments in last 90 days
         BigDecimal totalPayments90Days = paymentRepository.findByPaymentDateAfter(cutoffDate)
                 .stream()
-                .map(Payment::getAmount)
+                .map(PostedPayment::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
 

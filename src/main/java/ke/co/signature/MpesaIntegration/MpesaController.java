@@ -21,11 +21,7 @@ public class MpesaController {
     public ResponseEntity<?> pay(@RequestBody StkPushRequestDto request) {
         try {
             InitiateStkResponse resp = mpesaService.initiateStkPush(
-                    request.getPhoneNumber(),
-                    request.getAmount(),
-                    request.getAccountReference() == null ? "ACCOUNT" : request.getAccountReference(),
-                    request.getAccountReferenceId() == null ? 0L : request.getAccountReferenceId(),
-                    request.getTransactionDesc() == null ? "Payment" : request.getTransactionDesc()
+                    request
             );
             return ResponseEntity.ok(resp);
         } catch (Exception ex) {

@@ -1,6 +1,7 @@
 package ke.co.signature.MpesaIntegration;
 
 import jakarta.persistence.*;
+import ke.co.signature.BaseEntity;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -10,7 +11,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "transactions")
 @Data
-public class MpesaTransaction {
+public class MpesaTransaction  extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -18,16 +19,18 @@ public class MpesaTransaction {
     private String merchantRequestId;
     private String checkoutRequestId;
     private String phoneNumber;
+    private Long creditSale;
+    private String customerCode;
     private BigDecimal amount;
     private String status; // PENDING, SUCCESS, FAILED
     private String mpesaReceiptNumber;
-    @CreationTimestamp
-    private LocalDateTime createdAt;
+//    @CreationTimestamp
+//    private LocalDateTime createdAt;
     private LocalDateTime completedAt;
     private LocalDateTime timeCallbackReceived;
     private String callbackDescription;
     private Integer callbackResultCode;
 
     private String accountReference;
-    private Long transactionReferenceId;
+    private String transactionReferenceId;
 }

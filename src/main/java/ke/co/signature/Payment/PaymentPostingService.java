@@ -3,6 +3,9 @@ package ke.co.signature.Payment;
 import ke.co.signature.CreditSale.CreditSale;
 import ke.co.signature.CreditSale.CreditSaleRepository;
 import ke.co.signature.CreditSale.CreditSaleService;
+import ke.co.signature.Customer.Customer;
+import ke.co.signature.Customer.CustomerRepository;
+import ke.co.signature.MpesaIntegration.MpesaTransaction;
 import ke.co.signature.Payment.PaymentInProgress.PaymentInProgress;
 import ke.co.signature.Payment.PaymentInProgress.PaymentInProgressRepository;
 import ke.co.signature.Payment.PaymentSplit.PaymentSplit;
@@ -12,7 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -24,6 +29,7 @@ public class PaymentPostingService {
     private final CreditSaleRepository creditSaleRepository;
     private final PaymentSplitRepository paymentSplitRepository;
     private final CreditSaleService creditSaleService;
+    private final CustomerRepository customerRepository;
 
 
     @Transactional
@@ -36,15 +42,15 @@ public class PaymentPostingService {
             throw new IllegalStateException("Payment not ready to post");
         }
 
-        Payment payment = new Payment();
-        payment.setCustomer(pip.getCustomer());
-        payment.setAmount(pip.getAmount());
-        payment.setReference(pip.getReference());
-        payment.setPhoneNumber(pip.getPhoneNumber());
-        payment.setPaymentMode(pip.getPaymentMode());
-        payment.setPaymentDate(pip.getPaymentDate());
+        PostedPayment postedPayment = new PostedPayment();
+        postedPayment.setCustomer(pip.getCustomer());
+        postedPayment.setAmount(pip.getAmount());
+        postedPayment.setReference(pip.getReference());
+        postedPayment.setPhoneNumber(pip.getPhoneNumber());
+        postedPayment.setPaymentMode(pip.getPaymentMode());
+        postedPayment.setPaymentDate(pip.getPaymentDate());
 
-        paymentRepository.save(payment);
+        paymentRepository.save(postedPayment);
 
         BigDecimal remainingAmount = pip.getAmount();
 
@@ -79,7 +85,7 @@ public class PaymentPostingService {
             creditSaleRepository.save(cs);
 
             PaymentSplit split = new PaymentSplit();
-            split.setPayment(payment);
+            split.setPostedPayment(postedPayment);
             split.setCreditSale(cs);
             split.setAmountApplied(applied);
             paymentSplitRepository.save(split);
@@ -89,9 +95,69 @@ public class PaymentPostingService {
         }
 
         // ✅ Record unapplied amount
-        payment.setUnallocatedAmount(remainingAmount);
-        paymentRepository.save(payment);
+        postedPayment.setUnallocatedAmount(remainingAmount);
+        paymentRepository.save(postedPayment);
 
         inProgressRepository.delete(pip);
+    }
+
+    public void postMpesaPayment(MpesaTransaction tx) {
+        Customer customer = customerRepository.findByCustomerCode(tx.getCustomerCode()).get();
+        PostedPayment postedPayment = new PostedPayment();
+        postedPayment.setCustomer(customer);
+        postedPayment.setAmount(tx.getAmount());
+        postedPayment.setReference(tx.getMpesaReceiptNumber());
+        postedPayment.setPhoneNumber(tx.getPhoneNumber());
+        postedPayment.setPaymentMode(PaymentMode.MPESA);
+        postedPayment.setPaymentDate(LocalDate.now());
+
+        paymentRepository.save(postedPayment);
+
+        BigDecimal remainingAmount = tx.getAmount();
+
+        List<CreditSale> creditSalesToSettle;
+
+        if (tx.getCreditSale() != null) {
+
+            creditSalesToSettle = new ArrayList<>();
+            creditSalesToSettle.add(creditSaleRepository.findById(tx.getCreditSale()).get());
+
+            creditSalesToSettle.addAll(
+                    creditSaleRepository
+                            .findByCustomerAndBalanceGreaterThanOrderByCreatedAtAsc(
+                                    customer, BigDecimal.ZERO
+                            )
+            );
+        } else {
+            creditSalesToSettle =
+                    creditSaleRepository
+                            .findByCustomerAndBalanceGreaterThanOrderByCreatedAtAsc(
+                                    customer, BigDecimal.ZERO
+                            );
+        }
+
+        for (CreditSale cs : creditSalesToSettle) {
+
+            if (remainingAmount.compareTo(BigDecimal.ZERO) <= 0) break;
+            if (cs.getBalance().compareTo(BigDecimal.ZERO) <= 0) continue;
+
+            BigDecimal applied = remainingAmount.min(cs.getBalance());
+
+            cs.setBalance(cs.getBalance().subtract(applied));
+            creditSaleRepository.save(cs);
+
+            PaymentSplit split = new PaymentSplit();
+            split.setPostedPayment(postedPayment);
+            split.setCreditSale(cs);
+            split.setAmountApplied(applied);
+            paymentSplitRepository.save(split);
+            creditSaleService.updateClassification(cs);
+
+            remainingAmount = remainingAmount.subtract(applied);
+        }
+
+        // ✅ Record unapplied amount
+        postedPayment.setUnallocatedAmount(remainingAmount);
+        paymentRepository.save(postedPayment);
     }
 }

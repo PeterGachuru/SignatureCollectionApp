@@ -52,7 +52,7 @@
 
         function searchPayment() {
             let filter = document.getElementById("search").value.toLowerCase();
-            document.querySelectorAll(".tab-content.active .payment-row").forEach(row => {
+            document.querySelectorAll(".tab-content.active .postedPayment-row").forEach(row => {
                 row.style.display = row.innerText.toLowerCase().includes(filter) ? "" : "none";
             });
         }
@@ -104,7 +104,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="p : ${inProgressPayments}" class="payment-row">
+        <tr th:each="p : ${inProgressPayments}" class="postedPayment-row">
             <td th:text="${p.createdAt}"></td>
             <td th:text="${p.customer.businessName}"></td>
             <td th:text="${p.phoneNumber}"></td>
@@ -117,7 +117,7 @@
                       style="display:inline;">
                     <button type="submit"
                             class="btn btn-success"
-                            onclick="return confirm('Post this payment?');">
+                            onclick="return confirm('Post this postedPayment?');">
                         Post
                     </button>
                 </form>
@@ -142,7 +142,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="p : ${payments}" class="payment-row">
+        <tr th:each="p : ${payments}" class="postedPayment-row">
             <td th:text="${p.paymentDate}"></td>
             <td th:text="${p.customer.businessName}"></td>
             <td th:text="${p.phoneNumber}"></td>

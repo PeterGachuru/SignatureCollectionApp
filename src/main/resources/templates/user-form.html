@@ -19,13 +19,31 @@
     <input type="password" th:field="*{password}" required /><br/><br/>
 
     <label>Role:</label><br/>
-    <select name="roleId" required>
+    <select id="roleId" name="roleId" required>
         <option value="">-- Select Role --</option>
         <option th:each="role : ${roles}"
                 th:value="${role.id}"
+                th:data-role-name="${role.name}"
                 th:text="${role.name}">
         </option>
-    </select><br/><br/>
+    </select>
+    <br/><br/>
+
+    <div id="regionDiv" style="display:none;">
+
+        <label>Regions:</label><br/>
+
+        <div th:each="region : ${regions}">
+            <input type="checkbox"
+                   name="regionIds"
+                   th:value="${region.id}" />
+
+            <span th:text="${region.name}"></span>
+        </div>
+
+        <br/>
+    </div>
+    <br/><br/>
 
     <button type="submit">Save User</button>
 </form>
@@ -34,4 +52,35 @@
 <a href="/admin/users">← Back to Users</a>
 
 </body>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+
+        const roleSelect = document.getElementById("roleId");
+        const regionDiv = document.getElementById("regionDiv");
+
+        function toggleRegion() {
+            const selectedOption =
+                roleSelect.options[roleSelect.selectedIndex];
+
+            const roleName =
+                selectedOption.getAttribute("data-role-name");
+
+            if (roleName === "ROLE_REGIONAL_REP") {
+                regionDiv.style.display = "block";
+            } else {
+                regionDiv.style.display = "none";
+
+                // Uncheck all selected regions
+                document
+                    .querySelectorAll('input[name="regionIds"]')
+                    .forEach(cb => cb.checked = false);
+            }
+        }
+
+        roleSelect.addEventListener("change", toggleRegion);
+        toggleRegion();
+    });
+</script>
+
 </html>

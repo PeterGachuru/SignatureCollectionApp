@@ -10,7 +10,8 @@ public class StkPushRequestDto {
     private String phoneNumber;
     private BigDecimal amount;
     private String accountReference;
-
+    private Long creditSale;
+    private String customerCode;
     private Long accountReferenceId;
     private String transactionDesc;
 

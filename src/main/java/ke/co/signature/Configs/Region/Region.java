@@ -15,7 +15,5 @@ public class Region  extends BaseEntity {
 
     @Column(unique = true, nullable = false)
     private String name;
-
-    // getters & setters
 }
 

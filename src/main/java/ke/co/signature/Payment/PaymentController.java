@@ -51,11 +51,11 @@ public class PaymentController {
         List<PaymentInProgress> inProgressPayments =
                 paymentInProgressRepository.findAllByOrderByCreatedAtDesc();
 
-        List<Payment> postedPayments =
+        List<PostedPayment> postedPostedPayments =
                 paymentRepository.findAllByOrderByPaymentDateDesc();
 
         model.addAttribute("inProgressPayments", inProgressPayments);
-        model.addAttribute("payments", postedPayments);
+        model.addAttribute("payments", postedPostedPayments);
 
         return "payments/payment-list";
     }

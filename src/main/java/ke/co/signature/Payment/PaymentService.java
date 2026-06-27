@@ -12,7 +12,6 @@ import java.time.LocalDate;
 
 @Service
 public class PaymentService {
-
     private final PaymentRepository paymentRepository;
     private final CreditSaleRepository creditSaleRepository;
 
@@ -27,10 +26,10 @@ public class PaymentService {
      * This method should be called after successful MPESA STK callback.
      */
     @Transactional
-    public Payment applyMpesaPayment(CreditSale creditSale,
-                                     BigDecimal amountPaid,
-                                     String mpesaReceipt,
-                                     String phone) {
+    public PostedPayment applyMpesaPayment(CreditSale creditSale,
+                                           BigDecimal amountPaid,
+                                           String mpesaReceipt,
+                                           String phone) {
 
         // 🔒 Validate
         if (amountPaid.compareTo(BigDecimal.ZERO) <= 0) {
@@ -42,16 +41,16 @@ public class PaymentService {
         }
 
         // ✅ Create payment record
-        Payment payment = new Payment();
-        payment.setCustomer(creditSale.getCustomer());
-        payment.setCreditSale(creditSale);
-        payment.setAmount(amountPaid);
-        payment.setReference(mpesaReceipt);
-        payment.setPhoneNumber(phone);
-        payment.setPaymentMode(PaymentMode.MPESA);
-        payment.setPaymentDate(LocalDate.now());
+        PostedPayment postedPayment = new PostedPayment();
+        postedPayment.setCustomer(creditSale.getCustomer());
+        postedPayment.setCreditSale(creditSale);
+        postedPayment.setAmount(amountPaid);
+        postedPayment.setReference(mpesaReceipt);
+        postedPayment.setPhoneNumber(phone);
+        postedPayment.setPaymentMode(PaymentMode.MPESA);
+        postedPayment.setPaymentDate(LocalDate.now());
 
-        paymentRepository.save(payment);
+        paymentRepository.save(postedPayment);
 
         // ✅ Reduce balance
         creditSale.setBalance(
@@ -65,7 +64,7 @@ public class PaymentService {
 
         creditSaleRepository.save(creditSale);
 
-        return payment;
+        return postedPayment;
     }
 
     public BigDecimal getCustomerUnallocatedAmount(Customer customer) {

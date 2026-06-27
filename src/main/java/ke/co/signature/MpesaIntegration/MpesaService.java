@@ -1,5 +1,6 @@
 package ke.co.signature.MpesaIntegration;
 
+import ke.co.signature.Payment.PaymentPostingService;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -22,13 +23,15 @@ public class MpesaService {
     @Autowired
     private MpesaTransactionRepository mpesaTransactionRepository;
 
+    @Autowired
+    private PaymentPostingService paymentPostingService;
+
 
     private RestTemplate rest = new RestTemplate();
 
     public String getAccessToken() {
 
-        String url = "https://sandbox.safaricom.co.ke/oauth/v1/generate"
-                + "?grant_type=client_credentials";
+        String url = mpesaProperties.getOauthUrl();
 
         String credentials = mpesaProperties.getConsumerKey()
                 + ":" + mpesaProperties.getConsumerSecret();
@@ -48,10 +51,7 @@ public class MpesaService {
     }
 
 
-    public InitiateStkResponse initiateStkPush(String phoneNumber, BigDecimal amount,
-                                               String accountReference,
-                                               Long transactionReferenceId,
-                                               String transactionDesc) {
+    public InitiateStkResponse initiateStkPush(StkPushRequestDto requestDto) {
         String token = getAccessToken();
         String url = mpesaProperties.getStkUrl();
 
@@ -65,13 +65,13 @@ public class MpesaService {
         body.put("Password", password);
         body.put("Timestamp", timestamp);
         body.put("TransactionType", "CustomerPayBillOnline");
-        body.put("Amount", amount.intValue());
-        body.put("PartyA", formatPhone(phoneNumber)); // customer phone
+        body.put("Amount", requestDto.getAmount().intValue());
+        body.put("PartyA", formatPhone(requestDto.getPhoneNumber())); // customer phone
         body.put("PartyB", mpesaProperties.getShortCode()); // till/paybill
-        body.put("PhoneNumber", formatPhone(phoneNumber));
+        body.put("PhoneNumber", formatPhone(requestDto.getPhoneNumber()));
         body.put("CallBackURL", mpesaProperties.getCallbackUrl());
-        body.put("AccountReference", accountReference);
-        body.put("TransactionDesc", transactionDesc);
+        body.put("AccountReference", requestDto.getAccountReference());
+        body.put("TransactionDesc", requestDto.getTransactionDesc());
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -92,11 +92,13 @@ public class MpesaService {
             tx.setMerchantRequestId(respBody.getMerchantRequestId());
             tx.setCheckoutRequestId(respBody.getCheckoutRequestId());
         }
-        tx.setPhoneNumber(formatPhone(phoneNumber));
-        tx.setAmount(amount);
+        tx.setPhoneNumber(formatPhone(requestDto.getPhoneNumber()));
+        tx.setAmount(requestDto.getAmount());
         tx.setStatus("PENDING");
-        tx.setAccountReference(accountReference);
-        tx.setTransactionReferenceId(transactionReferenceId);
+        tx.setAccountReference(requestDto.getAccountReference());
+        tx.setTransactionReferenceId(requestDto.getCustomerCode());
+        tx.setCustomerCode(requestDto.getCustomerCode());
+        tx.setCreditSale(requestDto.getCreditSale());
         mpesaTransactionRepository.save(tx);
 
         return respBody;
@@ -156,7 +158,7 @@ public class MpesaService {
             }
 
             mpesaTransactionRepository.save(tx);
-//            studySubscriptionService.stkPaymentSuccessful(tx.getTransactionReferenceId(), tx.getMpesaReceiptNumber());
+            paymentPostingService.postMpesaPayment(tx);
 
         } else {
             tx.setStatus("FAILED");

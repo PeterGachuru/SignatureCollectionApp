@@ -2,7 +2,6 @@ package ke.co.signature.Payment;
 
 
 import ke.co.signature.BaseEntity;
-import ke.co.signature.CreditSale.DebtStatus;
 import ke.co.signature.Customer.Customer;
 import ke.co.signature.CreditSale.CreditSale;
 import jakarta.persistence.*;
@@ -10,12 +9,11 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "payments")
 @Data
-public class Payment extends BaseEntity {
+public class PostedPayment extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -54,7 +52,7 @@ public class Payment extends BaseEntity {
     @PrePersist
     public void onCreate() {
         super.onCreate();
-        System.out.println("In oncreate");
+        System.out.println("In onCreate");
         if (this.paymentDate == null) {
             this.paymentDate = LocalDate.now();
         }

@@ -24,7 +24,7 @@
     <script>
         function searchPayment() {
             let filter = document.getElementById("search").value.toLowerCase();
-            document.querySelectorAll(".payment-row").forEach(row => {
+            document.querySelectorAll(".postedPayment-row").forEach(row => {
                 row.style.display = row.innerText.toLowerCase().includes(filter) ? "" : "none";
             });
         }
@@ -64,7 +64,7 @@
     </thead>
 
     <tbody>
-    <tr th:each="p : ${payments}" class="payment-row">
+    <tr th:each="p : ${payments}" class="postedPayment-row">
         <td th:text="${p.paymentDate}"></td>
         <td th:text="${p.customer.businessName}"></td>
         <td th:text="${p.phoneNumber}"></td>

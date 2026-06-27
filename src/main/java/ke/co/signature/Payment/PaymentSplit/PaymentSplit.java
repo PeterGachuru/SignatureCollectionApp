@@ -3,7 +3,7 @@ package ke.co.signature.Payment.PaymentSplit;
 import jakarta.persistence.*;
 import ke.co.signature.BaseEntity;
 import ke.co.signature.CreditSale.CreditSale;
-import ke.co.signature.Payment.Payment;
+import ke.co.signature.Payment.PostedPayment;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -18,7 +18,7 @@ public class PaymentSplit extends BaseEntity {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "payment_id")
-    private Payment payment;
+    private PostedPayment postedPayment;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "credit_sale_id")

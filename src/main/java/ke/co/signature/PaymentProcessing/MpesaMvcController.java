@@ -57,11 +57,7 @@ public class MpesaMvcController {
         System.out.println("==============================Submitted skt request=======================");
         try {
             mpesaService.initiateStkPush(
-                    request.getPhoneNumber(),
-                    request.getAmount(),
-                    request.getAccountReference(),
-                    request.getAccountReferenceId(),
-                    request.getTransactionDesc()
+                    request
             );
 
             redirectAttributes.addFlashAttribute(

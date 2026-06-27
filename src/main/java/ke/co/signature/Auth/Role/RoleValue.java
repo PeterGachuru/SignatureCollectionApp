@@ -1,5 +1,5 @@
 package ke.co.signature.Auth.Role;
 
 public enum RoleValue {
-    CUSTOMER_ADMIN, ROLE_ADMIN, REGIONAL_REP
+    ROLE_CUSTOMER_ADMIN, ROLE_ADMIN, ROLE_REGIONAL_REP
 }

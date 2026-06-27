@@ -1,6 +1,8 @@
 package ke.co.signature.Customer;
 
 import ke.co.signature.Auth.Role.RoleValue;
+import ke.co.signature.Auth.User.User;
+import ke.co.signature.Auth.User.UserRepository;
 import ke.co.signature.Auth.User.UserService;
 import ke.co.signature.Configs.Region.Region;
 import ke.co.signature.Configs.Region.RegionRepository;
@@ -9,7 +11,6 @@ import ke.co.signature.Configs.Town.TownRepository;
 import ke.co.signature.CreditSale.CreditSaleRepository;
 import lombok.AllArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,10 +19,12 @@ import ke.co.signature.CreditSale.CreditSale;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+
+import static ke.co.signature.Auth.Role.RoleValue.ROLE_REGIONAL_REP;
 
 @Service
 @AllArgsConstructor
@@ -35,6 +38,7 @@ public class CustomerService {
 
     private final RegionRepository regionRepository;
     private final TownRepository townRepository;
+    private final UserRepository userRepository;
 
     public void uploadCustomersFromExcel(MultipartFile file) throws Exception {
         Workbook workbook = WorkbookFactory.create(file.getInputStream());
@@ -169,7 +173,7 @@ public class CustomerService {
 
         userService.createUser(customer.getUsername(),
                 userService.generateEasyPassword(customer.getUsername()),
-                RoleValue.CUSTOMER_ADMIN
+                RoleValue.ROLE_CUSTOMER_ADMIN
         );
         System.out.println(customer);
         return customerRepository.save(customer);
@@ -202,15 +206,50 @@ public class CustomerService {
     }
 
     public Page<CustomerCreditDTO> listCustomersWithTotalCredit(
+            String username,
             String search,
             int page,
             int size
-    ) {
+    ){
 
         Pageable pageable = PageRequest.of(page, size);
 
-        Page<Customer> customersPage =
-                customerRepository.searchCustomers(search, pageable);
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        boolean regionalRep = user.getRoles()
+                .stream()
+                .anyMatch(r -> {
+                    System.out.println("Role seen: "+r.getName());
+                    return r.getName().equals(ROLE_REGIONAL_REP);
+                });
+
+        Page<Customer> customersPage;
+
+        if (regionalRep) {
+
+            System.out.println("Is regional rep");
+
+            List<Long> regionIds = user.getRegions()
+                    .stream()
+                    .map(Region::getId)
+                    .toList();
+
+            System.out.println("Regions: "+ Arrays.deepToString(regionIds.toArray()));
+
+            customersPage = customerRepository.searchCustomersByRegions(
+                    search,
+                    regionIds,
+                    pageable
+            );
+
+        } else {
+
+            customersPage = customerRepository.searchCustomers(
+                    search,
+                    pageable
+            );
+        }
 
         return customersPage.map(c -> {
 

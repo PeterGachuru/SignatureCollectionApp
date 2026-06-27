@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.ArrayList;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Controller
 @RequestMapping("/admin/customers")
@@ -58,8 +61,14 @@ public class CustomerController {
             Model model
     ) {
 
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        String username = authentication.getName();
+
         Page<CustomerCreditDTO> customersPage =
                 customerService.listCustomersWithTotalCredit(
+                        username,
                         search,
                         page,
                         size
@@ -71,6 +80,13 @@ public class CustomerController {
         model.addAttribute("totalPages", customersPage.getTotalPages());
 
         model.addAttribute("search", search);
+
+        boolean regionalRep = authentication.getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .anyMatch(role -> role.equals("ROLE_REGIONAL_REP"));
+
+        model.addAttribute("regionalRep", regionalRep);
 
         return "customers/customer-list";
     }

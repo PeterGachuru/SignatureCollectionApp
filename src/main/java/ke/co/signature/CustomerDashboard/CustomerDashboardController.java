@@ -12,12 +12,10 @@ import java.security.Principal;
 @RequiredArgsConstructor
 @RequestMapping("/customer")
 public class CustomerDashboardController {
-
     private final CustomerDashboardService dashboardService;
 
     @GetMapping("/dashboard")
     public String dashboard(Model model, Principal principal) {
-
         String username = principal.getName();
 
         CustomerDashboardDTO dashboard =
@@ -27,4 +25,3 @@ public class CustomerDashboardController {
         return "customer/dashboard";
     }
 }
-

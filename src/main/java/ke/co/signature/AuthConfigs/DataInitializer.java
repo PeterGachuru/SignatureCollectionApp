@@ -33,16 +33,16 @@ public class DataInitializer implements CommandLineRunner {
                     role.setName(ROLE_ADMIN);
                     return roleRepository.save(role);
                 });
-        roleRepository.findByName(CUSTOMER_ADMIN)
+        roleRepository.findByName(ROLE_CUSTOMER_ADMIN)
                 .orElseGet(() -> {
                     Role role = new Role();
-                    role.setName(CUSTOMER_ADMIN);
+                    role.setName(ROLE_CUSTOMER_ADMIN);
                     return roleRepository.save(role);
                 });
-        roleRepository.findByName(REGIONAL_REP)
+        roleRepository.findByName(ROLE_REGIONAL_REP)
                 .orElseGet(() -> {
                     Role role = new Role();
-                    role.setName(REGIONAL_REP);
+                    role.setName(ROLE_REGIONAL_REP);
                     return roleRepository.save(role);
                 });
     }

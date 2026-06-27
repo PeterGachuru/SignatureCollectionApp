@@ -41,7 +41,7 @@
         <th>Unallocated</th>
     </tr>
 
-    <tr th:each="p : ${dashboard.recentPayments}">
+    <tr th:each="p : ${dashboard.recentPostedPayments}">
         <td th:text="${#temporals.format(p.paymentDate, 'dd-MM-yyyy HH:mm')}"></td>
         <td th:text="${p.amount}"></td>
         <td th:text="${p.unallocatedAmount}"></td>

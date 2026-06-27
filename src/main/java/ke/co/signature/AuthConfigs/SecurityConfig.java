@@ -16,7 +16,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 @Configuration
 public class SecurityConfig {
-
     private final UserRepository userRepository;
 
     public SecurityConfig(UserRepository userRepository) {
@@ -30,12 +29,10 @@ public class SecurityConfig {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 
     @Bean
     public DaoAuthenticationProvider authProvider() {
@@ -50,7 +47,8 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/css/**", "/js/**").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/admin/**").hasAnyRole("ADMIN", "REGIONAL_REP")
+//                        .requestMatchers("/admin/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -63,8 +61,8 @@ public class SecurityConfig {
                         .logoutSuccessUrl("/login")
                 )
                 .csrf(csrf -> csrf.disable()); // updated syntax for Spring Security 6.1+
-
+        http.addFilterBefore(new RoleLoggingFilter(),
+                org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
-
 }

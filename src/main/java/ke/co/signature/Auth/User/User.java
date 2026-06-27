@@ -3,14 +3,17 @@ package ke.co.signature.Auth.User;
 import jakarta.persistence.*;
 import ke.co.signature.Auth.Role.Role;
 import ke.co.signature.BaseEntity;
+import ke.co.signature.Configs.Region.Region;
 import lombok.Data;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "users")
 @Data
-public class User  extends BaseEntity {
+public class User extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,7 +22,7 @@ public class User  extends BaseEntity {
     private String username;
 
     @Column(nullable = false)
-    private String password; // will be stored hashed
+    private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -29,6 +32,13 @@ public class User  extends BaseEntity {
     )
     private Set<Role> roles;
 
-    private boolean enabled = true;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_regions",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "region_id")
+    )
+    private Set<Region> regions = new HashSet<>();
 
+    private boolean enabled = true;
 }

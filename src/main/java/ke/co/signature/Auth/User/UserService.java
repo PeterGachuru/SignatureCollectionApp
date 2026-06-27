@@ -49,12 +49,13 @@ public class UserService {
         String symbols = "!@#";
         String digits = "23456789";
 
-        char first = username.charAt(random.nextInt(username.length()));
-        char second = username.charAt(random.nextInt(username.length()));
-        char digit = digits.charAt(random.nextInt(digits.length()));
-        char symbol = symbols.charAt(random.nextInt(symbols.length()));
-
-        return "" + first + digit + second + symbol;
+//        char first = username.charAt(random.nextInt(username.length()));
+//        char second = username.charAt(random.nextInt(username.length()));
+//        char digit = digits.charAt(random.nextInt(digits.length()));
+//        char symbol = symbols.charAt(random.nextInt(symbols.length()));
+//
+//        return "" + first + digit + second + symbol;
+        return username+"!@234";
     }
 
     public boolean userExists(String username) {
