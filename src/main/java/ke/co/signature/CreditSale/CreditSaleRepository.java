@@ -1,10 +1,13 @@
 package ke.co.signature.CreditSale;
 
 import ke.co.signature.Customer.Customer;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.math.BigDecimal;
@@ -55,5 +58,18 @@ public interface CreditSaleRepository extends JpaRepository<CreditSale, Long> {
     List<Object[]> getClassificationSummary();
 
     boolean existsBySaleCode(String saleCode);
+
+    @Query("""
+    SELECT cs
+    FROM CreditSale cs
+    JOIN cs.customer c
+    JOIN c.town t
+    JOIN t.region r
+    WHERE r.id IN :regionIds
+""")
+    Page<CreditSale> findByRegions(
+            Collection<Long> regionIds,
+            Pageable pageable
+    );
 }
 

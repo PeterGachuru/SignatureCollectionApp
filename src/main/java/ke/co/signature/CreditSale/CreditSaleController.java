@@ -2,6 +2,9 @@ package ke.co.signature.CreditSale;
 
 import ke.co.signature.Customer.CustomerRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +27,7 @@ public class CreditSaleController {
         this.customerRepository = customerRepository;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/new")
     public String newCreditSale(Model model) {
         model.addAttribute("customers", customerRepository.findAll());
@@ -31,6 +35,7 @@ public class CreditSaleController {
         return "credit-sales/credit-sale-form";
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/save")
     public String saveCreditSale(@RequestParam Long customerId,
                                  @RequestParam BigDecimal grossAmount,
@@ -51,12 +56,25 @@ public class CreditSaleController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "50") int size,
             Model model) {
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
 
-        Page<CreditSaleDTO> creditSalePage = creditSaleService.listCreditSalesPaginated(page, size);
+        String username = authentication.getName();
+
+        boolean regionalRep = authentication.getAuthorities()
+                .stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_REGIONAL_REP"));
+
+        Page<CreditSaleDTO> creditSalePage =
+                creditSaleService.listCreditSalesPaginated(
+                        username,
+                        page,
+                        size);
 
         model.addAttribute("creditSales", creditSalePage.getContent());
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", creditSalePage.getTotalPages());
+        model.addAttribute("regionalRep", regionalRep);
 
         return "credit-sales/credit-sales-list";
     }

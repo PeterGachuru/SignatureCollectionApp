@@ -30,9 +30,13 @@
 
 <div style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
     <input type="text" id="search" onkeyup="searchCreditSales()" placeholder="Search by customer, code, status..." style="flex:1; margin-right:10px;"/>
-    <a th:href="@{/credit-sales/new}" class="btn-primary">+ New Credit Sale</a>
+    <a th:if="${!regionalRep}"
+       th:href="@{/credit-sales/new}"
+       class="btn-primary">
+        + New Credit Sale
+    </a>
 </div>
-<div style="margin-bottom:20px; padding:15px; border:1px solid #ddd; border-radius:5px;">
+<div  th:if="${!regionalRep}" style="margin-bottom:20px; padding:15px; border:1px solid #ddd; border-radius:5px;">
     <h3>Bulk Upload Credit Sales</h3>
 
     <form th:action="@{/credit-sales/upload}" method="post" enctype="multipart/form-data">

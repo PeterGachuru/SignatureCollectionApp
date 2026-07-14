@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+    <title>Upload Debt Ageing</title>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+
+    <th:block th:replace="~{fragments/header :: header-css}"></th:block>
+
+    <style>
+
+        .card{
+
+            max-width:700px;
+            margin:30px auto;
+            padding:20px;
+
+            border:1px solid #ddd;
+            border-radius:6px;
+
+            background:white;
+
+        }
+
+        .btn-primary{
+
+            padding:10px 20px;
+
+            background:#4CAF50;
+
+            color:white;
+
+            border:none;
+
+            border-radius:5px;
+
+            cursor:pointer;
+
+        }
+
+        input[type=file]{
+
+            width:100%;
+            margin:15px 0;
+
+        }
+
+        .success{
+
+            color:green;
+            margin-bottom:15px;
+
+        }
+
+        .error{
+
+            color:red;
+            margin-bottom:15px;
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div th:replace="fragments/header :: header"></div>
+
+<div class="card">
+
+    <h2>Debt Ageing Upload</h2>
+
+    <p>
+
+        Upload the monthly debt ageing Excel file.
+
+    </p>
+
+    <div
+            th:if="${success}"
+            class="success">
+
+        <span th:text="${success}"></span>
+
+    </div>
+
+    <div
+            th:if="${error}"
+            class="error">
+
+        <span th:text="${error}"></span>
+
+    </div>
+
+    <form
+            th:action="@{/debt-ageing/upload}"
+            method="post"
+            enctype="multipart/form-data">
+
+        <label>
+
+            Excel File
+
+        </label>
+
+        <input
+                type="file"
+                name="file"
+                accept=".xls,.xlsx"
+                required>
+
+        <button
+                type="submit"
+                class="btn-primary">
+
+            Upload
+
+        </button>
+
+    </form>
+
+    <hr>
+
+    <h4>Expected Excel Columns</h4>
+
+    <ul>
+
+        <li>CUS_CODE</li>
+
+        <li>CURRENT</li>
+
+        <li>30 DAYS</li>
+
+        <li>60 DAYS</li>
+
+        <li>90 DAYS</li>
+
+        <li>120 DAYS</li>
+
+        <li>AGEING TOTAL</li>
+
+    </ul>
+</div>
+</body>
+</html>

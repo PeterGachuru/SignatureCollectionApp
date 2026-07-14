@@ -1,14 +1,18 @@
 package ke.co.signature.CreditSale;
 
 import ke.co.signature.Auth.Role.RoleValue;
+import ke.co.signature.Auth.User.User;
+import ke.co.signature.Auth.User.UserRepository;
 import ke.co.signature.Auth.User.UserService;
 import ke.co.signature.Customer.Customer;
 import ke.co.signature.Customer.CustomerRepository;
+import ke.co.signature.Customer.CustomerService;
 import ke.co.signature.DebtClassification.DebtClassification;
 import ke.co.signature.Payment.PostedPayment;
 import ke.co.signature.Payment.PaymentSplit.PaymentSplit;
 import ke.co.signature.Payment.PaymentSplit.PaymentSplitDTO;
 import ke.co.signature.Payment.PaymentSplit.PaymentSplitRepository;
+import ke.co.signature.Configs.Region.Region;
 import lombok.AllArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.context.annotation.Bean;
@@ -27,14 +31,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static ke.co.signature.Auth.Role.RoleValue.ROLE_REGIONAL_REP;
+
 @Service
 @AllArgsConstructor
 public class CreditSaleService {
     private final CreditSaleRepository creditSaleRepository;
     private final CustomerRepository customerRepository;
+    private final CustomerService customerService;
     private final PaymentSplitRepository paymentSplitRepository;
     private final CreditSaleClassificationService classificationService;
     private final UserService userService;
+    private final UserRepository userRepository;
 
     public CreditSale createCreditSale(Long customerId,
                                        BigDecimal grossAmount,
@@ -59,12 +67,43 @@ public class CreditSaleService {
         return creditSale;
     }
 
-    public Page<CreditSaleDTO> listCreditSalesPaginated(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("saleDate").descending());
+    public Page<CreditSaleDTO> listCreditSalesPaginated(
+            String username,
+            int page,
+            int size
+    ) {
+        Pageable pageable =
+                PageRequest.of(page, size, Sort.by("saleDate").descending());
 
-        return creditSaleRepository.findAll(pageable)
-                .map(cs -> new CreditSaleDTO(cs
-                ));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        boolean regionalRep = user.getRoles()
+                .stream()
+                .anyMatch(r -> r.getName().equals(ROLE_REGIONAL_REP));
+
+        Page<CreditSale> sales;
+
+        if (regionalRep) {
+
+            List<Long> regionIds = user.getRegions()
+                    .stream()
+                    .map(Region::getId)
+                    .toList();
+
+            if (regionIds.isEmpty()) {
+                return Page.empty(pageable);
+            }
+
+            sales = creditSaleRepository.findByRegions(regionIds, pageable);
+
+        } else {
+
+            sales = creditSaleRepository.findAll(pageable);
+
+        }
+
+        return sales.map(CreditSaleDTO::new);
     }
 
     @Transactional(readOnly = true)
@@ -215,7 +254,7 @@ public class CreditSaleService {
 
             Customer customer =
                     customerRepository.findByCustomerCode(customerCode)
-                            .orElseGet(() -> createCustomerFromImport(customerCode, customerName));
+                            .orElseGet(() -> customerService.createCustomerFromImport(customerCode, customerName));
 
             String amountString =
                     getCellValue(row, headers, "total sales", formatter);
@@ -270,32 +309,6 @@ public class CreditSaleService {
         workbook.close();
 
         return imported;
-    }
-
-    private Customer createCustomerFromImport(String customerCode, String customerName) {
-
-        Customer customer = new Customer();
-
-        customer.setCustomerCode(customerCode);
-
-        // Since Excel doesn't guarantee these fields, generate safe defaults
-        customer.setUsername(customerCode.toLowerCase());
-
-        customer.setBusinessName(customerName);
-
-        customer.setContactPerson(null);
-        customer.setPhone(null);
-        customer.setEmail(null);
-        customer.setLocation(null);
-
-        customer.setActive(true);
-
-        userService.createUser(customer.getUsername(),
-                userService.generateEasyPassword(customer.getUsername()),
-                RoleValue.ROLE_CUSTOMER_ADMIN
-        );
-
-        return customerRepository.save(customer);
     }
 
     private String getCellValue(

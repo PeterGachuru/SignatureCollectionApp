@@ -25,6 +25,49 @@ public class ConfigurationService {
         this.customerUnitRepository = customerUnitRepository;
     }
 
+    public Region createAndReturnRegion(String name){
+        return regionRepository
+                .findByNameIgnoreCase(name)
+                .orElseGet(() -> {
+
+                    Region r = new Region();
+                    r.setName(name.trim());
+
+                    return regionRepository.save(r);
+                });
+
+    }
+
+    public CustomerUnit createAndReturnCustomerUnit(String name) {
+        return customerUnitRepository
+                .findByNameIgnoreCase(name)
+                .orElseGet(() -> {
+
+                    CustomerUnit customerUnit = new CustomerUnit();
+                    customerUnit.setName(name.trim());
+
+                    return customerUnitRepository.save(customerUnit);
+                });
+
+    }
+
+    public Town createAndReturnTown(String name, Region region) {
+        return  townRepository
+                .findByNameIgnoreCaseAndRegion(
+                        name,
+                        region
+                )
+                .orElseGet(() -> {
+
+                    Town t = new Town();
+
+                    t.setName(name.trim());
+                    t.setRegion(region);
+
+                    return townRepository.save(t);
+                });
+    }
+
     // Region
     public List<Region> listRegions() { return regionRepository.findAll(); }
     public Region saveRegion(Region region) { return regionRepository.save(region); }

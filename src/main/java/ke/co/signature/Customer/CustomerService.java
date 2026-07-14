@@ -4,6 +4,8 @@ import ke.co.signature.Auth.Role.RoleValue;
 import ke.co.signature.Auth.User.User;
 import ke.co.signature.Auth.User.UserRepository;
 import ke.co.signature.Auth.User.UserService;
+import ke.co.signature.Configs.ConfigurationService;
+import ke.co.signature.Configs.CustomerUnit.CustomerUnit;
 import ke.co.signature.Configs.Region.Region;
 import ke.co.signature.Configs.Region.RegionRepository;
 import ke.co.signature.Configs.Town.Town;
@@ -33,6 +35,7 @@ public class CustomerService {
 
     private final CustomerRepository customerRepository;
     private final CreditSaleRepository creditSaleRepository;
+    private final ConfigurationService configurationService;
 
     private final UserService userService;
 
@@ -91,33 +94,11 @@ public class CustomerService {
             // =========================
             // REGION
             // =========================
-            Region region = regionRepository
-                    .findByNameIgnoreCase(regionName)
-                    .orElseGet(() -> {
-
-                        Region r = new Region();
-                        r.setName(regionName.trim());
-
-                        return regionRepository.save(r);
-                    });
-
+            Region region = configurationService.createAndReturnRegion(regionName);
             // =========================
             // TOWN
             // =========================
-            Town town = townRepository
-                    .findByNameIgnoreCaseAndRegion(
-                            townName,
-                            region
-                    )
-                    .orElseGet(() -> {
-
-                        Town t = new Town();
-
-                        t.setName(townName.trim());
-                        t.setRegion(region);
-
-                        return townRepository.save(t);
-                    });
+            Town town = configurationService.createAndReturnTown(townName, region);
 
             // =========================
             // CREATE CUSTOMER
@@ -289,4 +270,43 @@ public class CustomerService {
         });
     }
 
+    public Customer createCustomerFromImport(String customerCode, String customerName) {
+        return createCustomerFromImport(customerCode, customerName, (Region) null,  null, null);
+    }
+
+    public Customer createCustomerFromImport(String customerCode, String customerName,
+                                             Region region, Town town, CustomerUnit customerUnit) {
+
+        Customer customer = new Customer();
+
+        customer.setCustomerCode(customerCode);
+
+        // Since Excel doesn't guarantee these fields, generate safe defaults
+        customer.setUsername(customerCode.toLowerCase());
+
+        customer.setBusinessName(customerName);
+
+        customer.setContactPerson(null);
+        customer.setPhone(null);
+        customer.setEmail(null);
+        customer.setLocation(null);
+
+        customer.setActive(true);
+
+        userService.createUser(customer.getUsername(),
+                userService.generateEasyPassword(customer.getUsername()),
+                RoleValue.ROLE_CUSTOMER_ADMIN
+        );
+
+        return customerRepository.save(customer);
+    }
+
+    public Customer createCustomerFromImport(String customerCode, String customerName,
+                                         String regionName, String townName, String unitName) {
+        Region region = configurationService.createAndReturnRegion(regionName);
+        Town town = configurationService.createAndReturnTown(townName, region);
+        CustomerUnit customerUnit = configurationService.createAndReturnCustomerUnit(unitName);
+
+        return createCustomerFromImport(customerCode, customerName, region, town, customerUnit);
+    }
 }
