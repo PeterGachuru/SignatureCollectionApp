@@ -1,11 +1,15 @@
 package ke.co.signature.Payment;
 
-import ke.co.signature.CreditSale.CreditSale;
-import ke.co.signature.CreditSale.CreditSaleRepository;
+import ke.co.signature.Configs.Bank.BankRepository;
 import ke.co.signature.Customer.Customer;
 import ke.co.signature.Customer.CustomerRepository;
+import ke.co.signature.DebtAgeingUpload.DebtAgeingRecord;
+import ke.co.signature.DebtAgeingUpload.DebtAgeingRecordRepository;
+import ke.co.signature.DebtAgeingUpload.DebtAgeingUpload;
+import ke.co.signature.DebtAgeingUpload.DebtAgeingUploadRepository;
 import ke.co.signature.Payment.PaymentInProgress.PaymentInProgress;
 import ke.co.signature.Payment.PaymentInProgress.PaymentInProgressRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,161 +22,408 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/admin/payments")
+@RequiredArgsConstructor
 public class PaymentController {
 
     private final PaymentRepository paymentRepository;
-    private final PaymentInProgressRepository paymentInProgressRepository;
+
+    private final PaymentInProgressRepository
+            paymentInProgressRepository;
+
     private final CustomerRepository customerRepository;
-    private final CreditSaleRepository creditSaleRepository;
-    private final PaymentPostingService paymentPostingService;
+
+    private final PaymentPostingService
+            paymentPostingService;
+
     private final PaymentService paymentService;
 
-    public PaymentController(
-            PaymentRepository paymentRepository,
-            PaymentInProgressRepository paymentInProgressRepository,
-            CustomerRepository customerRepository,
-            CreditSaleRepository creditSaleRepository,
-            PaymentPostingService paymentPostingService,
-            PaymentService paymentService) {
+    private final BankRepository bankRepository;
 
-        this.paymentRepository = paymentRepository;
-        this.paymentInProgressRepository = paymentInProgressRepository;
-        this.customerRepository = customerRepository;
-        this.creditSaleRepository = creditSaleRepository;
-        this.paymentPostingService = paymentPostingService;
-        this.paymentService = paymentService;
-    }
+    private final DebtAgeingUploadRepository
+            debtAgeingUploadRepository;
 
-    // ===============================
-    // ✅ LIST POSTED PAYMENTS
-    // ===============================
+    private final DebtAgeingRecordRepository
+            debtAgeingRecordRepository;
+
+
     @GetMapping
     public String listPayments(Model model) {
-        List<PaymentInProgress> inProgressPayments =
-                paymentInProgressRepository.findAllByOrderByCreatedAtDesc();
 
-        List<PostedPayment> postedPostedPayments =
-                paymentRepository.findAllByOrderByPaymentDateDesc();
+        List<PaymentInProgress>
+                inProgressPayments =
+                paymentInProgressRepository
+                        .findAllByOrderByCreatedAtDesc();
 
-        model.addAttribute("inProgressPayments", inProgressPayments);
-        model.addAttribute("payments", postedPostedPayments);
+        List<PostedPayment>
+                postedPayments =
+                paymentRepository
+                        .findAllByOrderByPaymentDateDesc();
+
+        model.addAttribute(
+                "inProgressPayments",
+                inProgressPayments
+        );
+
+        model.addAttribute(
+                "payments",
+                postedPayments
+        );
 
         return "payments/payment-list";
     }
 
-    // ===============================
-    // ⏳ LIST PAYMENTS IN PROGRESS
-    // ===============================
+
     @GetMapping("/in-progress")
-    public String listPaymentsInProgress(Model model) {
+    public String listPaymentsInProgress(
+            Model model) {
+
         model.addAttribute(
                 "payments",
-                paymentInProgressRepository.findAll()
+                paymentInProgressRepository
+                        .findAll()
         );
+
         return "payments/payment-in-progress-list";
     }
 
-    // ===============================
-    // ➕ NEW PAYMENT (IN PROGRESS)
-    // ===============================
+
     @GetMapping("/new")
     public String newPayment(
-            @RequestParam(required = false) Long creditSaleId,
             Model model) {
 
-        PaymentInProgress pip = new PaymentInProgress();
-        pip.setPaymentDate(LocalDate.now());
+        PaymentInProgress pip =
+                new PaymentInProgress();
 
-        BigDecimal unallocatedAmount = BigDecimal.ZERO;
+        pip.setPaymentDate(
+                LocalDate.now()
+        );
 
-        if (creditSaleId != null) {
-            CreditSale creditSale = creditSaleRepository.findById(creditSaleId)
-                    .orElseThrow(() -> new RuntimeException("Credit sale not found"));
+        model.addAttribute(
+                "paymentInProgress",
+                pip
+        );
 
-            pip.setCreditSale(creditSale);
-            pip.setCustomer(creditSale.getCustomer());
-            pip.setAmount(creditSale.getBalance()); // default suggestion
+        model.addAttribute(
+                "customers",
+                customerRepository.findAll()
+        );
 
-            // 🔥 Fetch unallocated funds
-            unallocatedAmount = paymentService
-                    .getCustomerUnallocatedAmount(creditSale.getCustomer());
-        }
+        model.addAttribute(
+                "paymentModes",
+                PaymentMode.values()
+        );
 
-        model.addAttribute("paymentInProgress", pip);
-        model.addAttribute("unallocatedAmount", unallocatedAmount);
+        model.addAttribute(
+                "banks",
+                bankRepository.findByActiveTrueOrderByNameAsc()
+        );
 
-        model.addAttribute("customers", customerRepository.findAll());
-        model.addAttribute("creditSales", creditSaleRepository.findAll());
-        model.addAttribute("paymentModes", PaymentMode.values());
+        model.addAttribute(
+                "unallocatedAmount",
+                BigDecimal.ZERO
+        );
 
         return "payments/payment-form";
     }
 
 
+    /**
+     * Optional endpoint used by the payment form
+     * to retrieve the customer's latest debt.
+     */
+    @GetMapping("/customer/{customerId}/debt")
+    @ResponseBody
+    public CustomerDebtResponse
+    getCustomerDebt(
+            @PathVariable Long customerId) {
 
-    // ===============================
-    // 💾 SAVE PAYMENT (IN PROGRESS)
-    // ===============================
+        Customer customer =
+                customerRepository.findById(
+                        customerId
+                ).orElseThrow(() ->
+                        new RuntimeException(
+                                "Customer not found."
+                        )
+                );
+
+
+        DebtAgeingUpload latestUpload =
+                debtAgeingUploadRepository
+                        .findLatestUploadForCustomer(
+                                customer
+                        )
+                        .orElse(null);
+
+
+        if (latestUpload == null) {
+
+            return new CustomerDebtResponse(
+                    null,
+                    BigDecimal.ZERO,
+                    null
+            );
+        }
+
+
+        DebtAgeingRecord record =
+                debtAgeingRecordRepository
+                        .findByUploadIdAndCustomer(
+                                latestUpload.getId(),
+                                customer
+                        )
+                        .orElse(null);
+
+
+        if (record == null) {
+
+            return new CustomerDebtResponse(
+                    latestUpload.getId(),
+                    BigDecimal.ZERO,
+                    null
+            );
+        }
+
+
+        return new CustomerDebtResponse(
+                latestUpload.getId(),
+                record.getTotalDebt(),
+                record.getId()
+        );
+    }
+
+
     @PostMapping("/save")
     public String savePayment(
             @RequestParam Long customerId,
+
             @RequestParam BigDecimal amount,
+
             @RequestParam PaymentMode paymentMode,
-            @RequestParam(required = false) String reference,
-            @RequestParam(required = false) String phoneNumber,
-            @RequestParam(required = false) Long creditSaleId,
+
             @RequestParam(required = false)
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            String reference,
+
+            @RequestParam(required = false)
+            String phoneNumber,
+
+            @RequestParam(required = false)
+            Long bankId,
+
+            @RequestParam(required = false)
+            String chequeNumber,
+
+            @RequestParam(required = false)
+            @DateTimeFormat(
+                    iso = DateTimeFormat.ISO.DATE
+            )
+            LocalDate chequeDate,
+
+            @RequestParam(required = false)
+            @DateTimeFormat(
+                    iso = DateTimeFormat.ISO.DATE
+            )
             LocalDate paymentDate,
+
             RedirectAttributes redirectAttributes) {
 
-        Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new RuntimeException("Customer not found"));
 
-        CreditSale creditSale = null;
-        if (creditSaleId != null) {
-            creditSale = creditSaleRepository.findById(creditSaleId)
-                    .orElseThrow(() -> new RuntimeException("Credit sale not found"));
+        try {
+
+            Customer customer =
+                    customerRepository.findById(
+                            customerId
+                    ).orElseThrow(() ->
+                            new RuntimeException(
+                                    "Customer not found."
+                            )
+                    );
+
+
+            /*
+             * Ensure the customer has an ageing record
+             * in the latest upload.
+             */
+            DebtAgeingUpload latestUpload =
+                    debtAgeingUploadRepository
+                            .findLatestUploadForCustomer(
+                                    customer
+                            )
+                            .orElseThrow(() ->
+                                    new RuntimeException(
+                                            "This customer does not " +
+                                                    "have a debt ageing record " +
+                                                    "in the latest upload."
+                                    )
+                            );
+
+
+            DebtAgeingRecord record =
+                    debtAgeingRecordRepository
+                            .findByUploadIdAndCustomer(
+                                    latestUpload.getId(),
+                                    customer
+                            )
+                            .orElseThrow(() ->
+                                    new RuntimeException(
+                                            "Debt ageing record not found " +
+                                                    "for this customer."
+                                    )
+                            );
+
+
+            if (amount == null ||
+                    amount.compareTo(
+                            BigDecimal.ZERO
+                    ) <= 0) {
+
+                throw new RuntimeException(
+                        "Payment amount must be greater than zero."
+                );
+            }
+
+
+            PaymentInProgress pip =
+                    new PaymentInProgress();
+
+            pip.setCustomer(customer);
+            pip.setAmount(amount);
+            pip.setPaymentMode(paymentMode);
+            pip.setReference(reference);
+
+            /*
+             * Phone only for M-Pesa.
+             */
+            if (paymentMode == PaymentMode.MPESA) {
+
+                pip.setPhoneNumber(
+                        phoneNumber
+                );
+
+            } else {
+
+                pip.setPhoneNumber(null);
+            }
+
+
+            /*
+             * Cheque information.
+             */
+            if (paymentMode == PaymentMode.CHEQUE) {
+
+                if (bankId == null) {
+
+                    throw new RuntimeException(
+                            "Please select a bank."
+                    );
+                }
+
+                if (chequeNumber == null ||
+                        chequeNumber.isBlank()) {
+
+                    throw new RuntimeException(
+                            "Cheque number is required."
+                    );
+                }
+
+                if (chequeDate == null) {
+
+                    throw new RuntimeException(
+                            "Cheque date is required."
+                    );
+                }
+
+
+                pip.setBank(
+                        bankRepository.findById(
+                                bankId
+                        ).orElseThrow(() ->
+                                new RuntimeException(
+                                        "Bank not found."
+                                )
+                        )
+                );
+
+                pip.setChequeNumber(
+                        chequeNumber.trim()
+                );
+
+                pip.setChequeDate(
+                        chequeDate
+                );
+
+            } else {
+
+                pip.setBank(null);
+                pip.setChequeNumber(null);
+                pip.setChequeDate(null);
+            }
+
+
+            pip.setPaymentDate(
+                    paymentDate == null
+                            ? LocalDate.now()
+                            : paymentDate
+            );
+
+            pip.setStatus(
+                    PaymentStatus.READY_TO_POST
+            );
+
+
+            paymentInProgressRepository.save(
+                    pip
+            );
+
+
+            redirectAttributes.addFlashAttribute(
+                    "success",
+                    "Payment captured and awaiting posting."
+            );
+
+
+        } catch (Exception ex) {
+
+            redirectAttributes.addFlashAttribute(
+                    "error",
+                    ex.getMessage()
+            );
         }
 
-        PaymentInProgress pip = new PaymentInProgress();
-        pip.setCustomer(customer);
-        pip.setCreditSale(creditSale);
-        pip.setAmount(amount);
-        pip.setPaymentMode(paymentMode);
-        pip.setReference(reference);
-        pip.setPhoneNumber(phoneNumber);
-        pip.setPaymentDate(paymentDate);
-        pip.setStatus(PaymentStatus.READY_TO_POST);
-        // manual payments are immediately postable
-
-        System.out.println(pip);
-
-        paymentInProgressRepository.save(pip);
-
-        redirectAttributes.addFlashAttribute(
-                "success",
-                "Payment captured and awaiting posting"
-        );
 
         return "redirect:/admin/payments/in-progress";
     }
 
-    // ===============================
-    // ✅ POST (FINALIZE) PAYMENT
-    // ===============================
+
     @PostMapping("/post/{id}")
     public String postPayment(
             @PathVariable Long id,
             RedirectAttributes redirectAttributes) {
 
-        paymentPostingService.postPayment(id);
+        try {
 
-        redirectAttributes.addFlashAttribute(
-                "success",
-                "Payment posted successfully"
-        );
+            paymentPostingService.postPayment(id);
+
+            redirectAttributes.addFlashAttribute(
+                    "success",
+                    "Payment posted successfully."
+            );
+
+        } catch (Exception ex) {
+
+            redirectAttributes.addFlashAttribute(
+                    "error",
+                    ex.getMessage()
+            );
+        }
 
         return "redirect:/admin/payments";
+    }
+
+
+    public record CustomerDebtResponse(
+            Long uploadId,
+            BigDecimal totalDebt,
+            Long debtAgeingRecordId
+    ) {
     }
 }

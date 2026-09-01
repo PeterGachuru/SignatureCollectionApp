@@ -31,8 +31,6 @@ import static ke.co.signature.Auth.Role.RoleValue.ROLE_REGIONAL_REP;
 @Service
 @AllArgsConstructor
 public class CustomerService {
-
-
     private final CustomerRepository customerRepository;
     private final CreditSaleRepository creditSaleRepository;
     private final ConfigurationService configurationService;

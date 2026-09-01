@@ -113,25 +113,25 @@ public class CreditSaleService {
                 .orElseThrow(() -> new RuntimeException("Credit Sale not found"));
 
         // Fetch payment splits
-        List<PaymentSplit> splits = paymentSplitRepository.findByCreditSaleId(id);
+//        List<PaymentSplit> splits = paymentSplitRepository.findByCreditSaleId(id);
 
         // Map splits → DTO
-        List<PaymentSplitDTO> splitDTOs = splits.stream().map(ps -> {
-            PostedPayment p = ps.getPostedPayment();
-
-            PaymentSplitDTO dto = new PaymentSplitDTO();
-            dto.setId(ps.getId());
-            dto.setAmountApplied(ps.getAmountApplied());
-
-            dto.setPaymentId(p.getId());
-            dto.setPaymentAmount(p.getAmount());
-            dto.setPaymentReference(p.getReference());
-            dto.setPhoneNumber(p.getPhoneNumber());
-            dto.setPaymentMode(p.getPaymentMode() != null ? p.getPaymentMode().name() : null);
-            dto.setPaymentDate(p.getPaymentDate());
-
-            return dto;
-        }).toList();
+//        List<PaymentSplitDTO> splitDTOs = splits.stream().map(ps -> {
+//            PostedPayment p = ps.getPostedPayment();
+//
+//            PaymentSplitDTO dto = new PaymentSplitDTO();
+//            dto.setId(ps.getId());
+//            dto.setAmountApplied(ps.getAmountApplied());
+//
+//            dto.setPaymentId(p.getId());
+//            dto.setPaymentAmount(p.getAmount());
+//            dto.setPaymentReference(p.getReference());
+//            dto.setPhoneNumber(p.getPhoneNumber());
+//            dto.setPaymentMode(p.getPaymentMode() != null ? p.getPaymentMode().name() : null);
+//            dto.setPaymentDate(p.getPaymentDate());
+//
+//            return dto;
+//        }).toList();
 
         // Build main DTO
         CreditSaleDetailsDTO dto = new CreditSaleDetailsDTO();
@@ -154,7 +154,7 @@ public class CreditSaleService {
         dto.setCreatedAt(cs.getCreatedAt());
         dto.setCreatedBy(cs.getCreatedBy() != null ? cs.getCreatedBy().getUsername() : null);
 
-        dto.setPaymentSplits(splitDTOs);
+//        dto.setPaymentSplits(splitDTOs);
 
         return dto;
     }

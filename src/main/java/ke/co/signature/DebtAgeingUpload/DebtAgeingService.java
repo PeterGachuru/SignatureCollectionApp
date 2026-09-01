@@ -206,12 +206,33 @@ public class DebtAgeingService {
 
             record.setCustomer(customer.get());
 
-            record.setCurrentAmount(getBigDecimal(row, headers, "CURRENT"));
-            record.setDays30(getBigDecimal(row, headers, "30 DAYS"));
-            record.setDays60(getBigDecimal(row, headers, "60 DAYS"));
-            record.setDays90(getBigDecimal(row, headers, "90 DAYS"));
-            record.setDays120(getBigDecimal(row, headers, "120 DAYS"));
-            record.setTotalDebt(getBigDecimal(row, headers, "AGEING TOTAL"));
+            record.setCurrentAmount(
+                    getBigDecimal(row, headers, "CURRENT")
+            );
+
+            record.setDays30(
+                    getBigDecimal(row, headers, "30 DAYS")
+            );
+
+            record.setDays60(
+                    getBigDecimal(row, headers, "60 DAYS")
+            );
+
+            record.setDays90(
+                    getBigDecimal(row, headers, "90 DAYS")
+            );
+
+            record.setDays120(
+                    getBigDecimal(row, headers, "120 DAYS")
+            );
+
+//            record.setOver120(
+//                    getBigDecimal(row, headers, "OVER 120 DAYS")
+//            );
+
+            record.setTotalDebt(
+                    getBigDecimal(row, headers, "AGEING TOTAL")
+            );
 
             recordRepository.save(record);
 
@@ -346,6 +367,7 @@ public class DebtAgeingService {
                 "60 DAYS",
                 "90 DAYS",
                 "120 DAYS",
+//                "OVER 120 DAYS",
                 "AGEING TOTAL"
         );
 

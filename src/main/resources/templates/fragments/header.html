@@ -3,12 +3,16 @@
 
 <!-- ===== HEADER CSS FRAGMENT ===== -->
 <head th:fragment="header-css">
+
     <style>
+
         body {
             margin: 0;
             font-family: Arial, sans-serif;
         }
 
+
+        /* HEADER */
         .header {
             background-color: #004080;
             color: white;
@@ -18,84 +22,250 @@
             align-items: center;
         }
 
+
+        /* LOGO */
         .logo {
             font-weight: bold;
             font-size: 1.25em;
         }
 
-        .nav {
-            display: flex;
-            gap: 12px;
+        .logo a {
+            color:white;
+            text-decoration:none;
         }
+
+
+        /* NAVIGATION */
+        .nav {
+            display:flex;
+            align-items:center;
+            gap:10px;
+        }
+
 
         .nav a {
-            color: white;
-            text-decoration: none;
-            padding: 8px 12px;
-            border-radius: 4px;
+            color:white;
+            text-decoration:none;
+            padding:8px 12px;
+            border-radius:4px;
+            white-space:nowrap;
         }
+
 
         .nav a:hover {
-            background-color: #0066cc;
+            background-color:#0066cc;
         }
 
-        .dropdown {
-            position: relative;
+
+        /* LOGOUT BUTTON */
+        .logout-btn {
+            background:none;
+            border:none;
+            color:white;
+            cursor:pointer;
+            font-weight:bold;
+            font-size:14px;
         }
 
-        .dropbtn {
-            cursor: pointer;
+
+        /* HAMBURGER */
+        .menu-toggle {
+            display:none;
+            font-size:28px;
+            cursor:pointer;
         }
 
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            right: 0;
-            background-color: #004080;
-            min-width: 180px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-            z-index: 1000;
+
+        /* MOBILE MENU */
+        #menu-checkbox {
+            display:none;
         }
 
-        .dropdown-content a {
-            padding: 10px 14px;
+
+        /* MOBILE RESPONSIVENESS */
+        @media(max-width:900px){
+
+            .header {
+                flex-wrap:wrap;
+                padding:12px 16px;
+            }
+
+
+            .logo {
+                font-size:1.1em;
+                max-width:75%;
+            }
+
+
+            .menu-toggle {
+                display:block;
+            }
+
+
+            .nav {
+
+                width:100%;
+                display:none;
+                flex-direction:column;
+                align-items:stretch;
+                margin-top:15px;
+                gap:0;
+            }
+
+
+            #menu-checkbox:checked ~ .nav {
+                display:flex;
+            }
+
+
+            .nav a {
+
+                padding:12px;
+                border-radius:0;
+                border-bottom:1px solid rgba(255,255,255,.2);
+            }
+
+
+            .nav span {
+
+                padding:12px;
+                border-bottom:1px solid rgba(255,255,255,.2);
+            }
+
+
+            .logout-btn {
+
+                padding:0;
+            }
+
         }
 
-        .dropdown:hover .dropdown-content {
-            display: block;
+
+        /* VERY SMALL PHONES */
+        @media(max-width:400px){
+
+            .logo {
+                font-size:1em;
+            }
+
+            .menu-toggle {
+                font-size:24px;
+            }
+
         }
+
+
     </style>
+
 </head>
+
+
 
 <!-- ===== HEADER HTML FRAGMENT ===== -->
 <body>
+
 <div th:fragment="header">
+
     <div class="header">
+
+
+        <!-- LOGO -->
         <div class="logo">
-            <a th:href="@{/}" style="color:white; text-decoration:none;">Signature Care Collection App</a>
+            <a th:href="@{/}">
+                Signature Care Collection App
+            </a>
         </div>
 
+
+        <!-- MOBILE MENU BUTTON -->
+        <label class="menu-toggle" for="menu-checkbox">
+            ☰
+        </label>
+
+
+        <input type="checkbox" id="menu-checkbox">
+
+
+        <!-- NAVIGATION -->
         <div class="nav">
-            <a th:href="@{/admin/customers/list}">Customers</a>
-            <a th:href="@{/debt-ageing}">Aging Debt</a>
-            <a th:href="@{/credit-sales/list}">Credit Sales</a>
-            <a th:href="@{/admin/payments}">Payments</a>
-            <a th:href="@{/config}">Configs</a>
-            <a th:href="@{/admin/users}">Users</a>
-            <span  th:if="${#authentication != null and #authorization.expression('isAuthenticated()')}">
-                <span>
-                     <a th:text="${#authentication.name}" th:href="@{/profile}" style="color:white; text-decoration:none;">Username</a></span> |
-                <form th:action="@{/logout}" method="post" style="display:inline;">
-                    <button type="submit" style="background:none; border:none; color:white; cursor:pointer; font-weight:bold;">
-                        Logout
-                    </button>
-                </form>
-            </span>
+
+
+            <a th:href="@{/admin/customers/list}">
+                Customers
+            </a>
+
+
+            <a th:href="@{/debt-ageing}">
+                Aging Debt
+            </a>
+
+
+<!--            <a th:href="@{/credit-sales/list}">-->
+<!--                Credit Sales-->
+<!--            </a>-->
+
+            <a>
+                Orders
+            </a>
+
+
+            <a th:href="@{/admin/payments}">
+                Payments
+            </a>
+
+
+            <a th:href="@{/config}">
+                Configs
+            </a>
+
+
+            <a th:href="@{/admin/users}">
+                Users
+            </a>
+
+
+
+            <!-- AUTHENTICATED USER -->
+            <span th:if="${#authentication != null and #authorization.expression('isAuthenticated()')}">
+
+
+            <a th:text="${#authentication.name}"
+               th:href="@{/profile}">
+                Username
+            </a>
+
+
+            <form th:action="@{/logout}" method="post"
+                  style="display:inline;">
+
+                <button class="logout-btn"
+                        type="submit">
+                    Logout
+                </button>
+
+            </form>
+
+
+        </span>
+
+
+
+            <!-- NOT AUTHENTICATED -->
             <span th:if="${#authentication == null or !#authorization.expression('isAuthenticated()')}">
-                <a th:href="@{/login}" style="color:white; text-decoration:none;">Login</a>
-            </span>
+
+            <a th:href="@{/login}">
+                Login
+            </a>
+
+        </span>
+
+
         </div>
+
+
     </div>
+
 </div>
+
 </body>
 </html>

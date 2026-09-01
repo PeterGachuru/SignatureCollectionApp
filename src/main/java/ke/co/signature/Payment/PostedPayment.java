@@ -1,10 +1,9 @@
 package ke.co.signature.Payment;
 
-
-import ke.co.signature.BaseEntity;
-import ke.co.signature.Customer.Customer;
-import ke.co.signature.CreditSale.CreditSale;
 import jakarta.persistence.*;
+import ke.co.signature.BaseEntity;
+import ke.co.signature.Configs.Bank.Bank;
+import ke.co.signature.Customer.Customer;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -14,47 +13,58 @@ import java.time.LocalDate;
 @Table(name = "payments")
 @Data
 public class PostedPayment extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // ✅ Customer who made the payment
     @ManyToOne(optional = false)
-    @JoinColumn(name = "customer_id")
+    @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
-    // ✅ Optional: payment can be tied to a specific credit sale
-    @ManyToOne
-    @JoinColumn(name = "credit_sale_id")
-    private CreditSale creditSale;
-
-    @Column(nullable = false)
+    @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal amount;
 
-    // MPESA receipt number (or manual reference)
     private String reference;
 
-    // Phone number used for payment
+    /**
+     * Only applicable to M-Pesa.
+     */
     private String phoneNumber;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private PaymentMode paymentMode;
 
-    // Date the payment was made (business date)
     @Column(nullable = false)
     private LocalDate paymentDate;
 
-    // ✅ Amount not yet allocated to any credit sale
-    @Column(nullable = false)
+    @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal unallocatedAmount = BigDecimal.ZERO;
+
+    /*
+     * CHEQUE INFORMATION
+     */
+
+    @ManyToOne
+    @JoinColumn(name = "bank_id")
+    private Bank bank;
+
+    private String chequeNumber;
+
+    private LocalDate chequeDate;
 
     @PrePersist
     public void onCreate() {
+
         super.onCreate();
-        System.out.println("In onCreate");
+
         if (this.paymentDate == null) {
             this.paymentDate = LocalDate.now();
+        }
+
+        if (this.unallocatedAmount == null) {
+            this.unallocatedAmount = BigDecimal.ZERO;
         }
     }
 }

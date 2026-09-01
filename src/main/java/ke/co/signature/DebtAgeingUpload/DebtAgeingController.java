@@ -1,5 +1,7 @@
 package ke.co.signature.DebtAgeingUpload;
 
+import ke.co.signature.Auth.User.User;
+import ke.co.signature.Auth.User.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -8,8 +10,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import ke.co.signature.Configs.Region.Region;
 
 import java.util.List;
+
+import static ke.co.signature.Auth.Role.RoleValue.ROLE_REGIONAL_REP;
 
 @Controller
 @RequestMapping("/debt-ageing")
@@ -19,6 +26,7 @@ public class DebtAgeingController {
     private final DebtAgeingService debtAgeingService;
     private final DebtAgeingUploadRepository uploadRepository;
     private final DebtAgeingRecordRepository recordRepository;
+    private final UserRepository userRepository;
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/upload")
@@ -69,13 +77,43 @@ public class DebtAgeingController {
                 .orElseThrow(() ->
                         new RuntimeException("Upload not found."));
 
-        List<DebtAgeingRecord> records =
-                recordRepository.findByUploadIdOrderByTotalDebtDesc(uploadId);
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        String username = authentication.getName();
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        boolean regionalRep = user.getRoles()
+                .stream()
+                .anyMatch(r -> r.getName().equals(ROLE_REGIONAL_REP));
+
+        List<DebtAgeingRecord> records;
+
+        if (regionalRep) {
+
+            List<Long> regionIds = user.getRegions()
+                    .stream()
+                    .map(Region::getId)
+                    .toList();
+
+            records = recordRepository
+                    .findByUploadIdAndCustomerTownRegionIdInOrderByTotalDebtDesc(
+                            uploadId,
+                            regionIds
+                    );
+
+        } else {
+
+            records = recordRepository
+                    .findByUploadIdOrderByTotalDebtDesc(uploadId);
+
+        }
 
         model.addAttribute("upload", upload);
         model.addAttribute("records", records);
 
         return "debt-ageing/debt-ageing-records";
     }
-
 }

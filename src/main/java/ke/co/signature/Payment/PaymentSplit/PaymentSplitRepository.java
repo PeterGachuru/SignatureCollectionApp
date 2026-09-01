@@ -6,5 +6,10 @@ import java.util.List;
 
 public interface PaymentSplitRepository
         extends JpaRepository<PaymentSplit, Long> {
-    List<PaymentSplit> findByCreditSaleId(Long id);
+
+    List<PaymentSplit>
+    findByDebtAgeingRecordId(Long debtAgeingRecordId);
+
+    List<PaymentSplit>
+    findByPostedPaymentId(Long postedPaymentId);
 }

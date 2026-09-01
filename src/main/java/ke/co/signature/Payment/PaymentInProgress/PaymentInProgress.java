@@ -2,7 +2,7 @@ package ke.co.signature.Payment.PaymentInProgress;
 
 import jakarta.persistence.*;
 import ke.co.signature.BaseEntity;
-import ke.co.signature.CreditSale.CreditSale;
+import ke.co.signature.Configs.Bank.Bank;
 import ke.co.signature.Customer.Customer;
 import ke.co.signature.Payment.PaymentMode;
 import ke.co.signature.Payment.PaymentStatus;
@@ -15,25 +15,26 @@ import java.time.LocalDate;
 @Table(name = "payments_in_progress")
 @Data
 public class PaymentInProgress extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Customer is mandatory
     @ManyToOne(optional = false)
-    @JoinColumn(name = "customer_id")
+    @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
-    // Optional: linked credit sale
-    @ManyToOne
-    @JoinColumn(name = "credit_sale_id")
-    private CreditSale creditSale;
-
-    @Column(nullable = false)
+    @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal amount;
 
-    private String reference; // MPESA receipt or manual reference
+    /**
+     * M-Pesa receipt, bank reference, etc.
+     */
+    private String reference;
 
+    /**
+     * Only applicable to M-Pesa.
+     */
     private String phoneNumber;
 
     @Enumerated(EnumType.STRING)
@@ -43,19 +44,33 @@ public class PaymentInProgress extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private PaymentStatus status;
-    // INITIATED, AWAITING_CONFIRMATION, FAILED, READY_TO_POST
 
     @Column(nullable = false)
     private LocalDate paymentDate;
+
+    /*
+     * CHEQUE INFORMATION
+     */
+
+    @ManyToOne
+    @JoinColumn(name = "bank_id")
+    private Bank bank;
+
+    private String chequeNumber;
+
+    private LocalDate chequeDate;
 
     private String failureReason;
 
     @PrePersist
     public void onCreate() {
+
         super.onCreate();
+
         if (paymentDate == null) {
             paymentDate = LocalDate.now();
         }
+
         if (status == null) {
             status = PaymentStatus.INITIATED;
         }

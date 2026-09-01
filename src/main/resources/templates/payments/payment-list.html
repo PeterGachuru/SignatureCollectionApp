@@ -1,25 +1,39 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
+
     <title>Payments</title>
+
     <th:block th:replace="~{fragments/header :: header-css}"></th:block>
-    <link rel="stylesheet" th:href="@{/css/style.css}" />
+
+    <link rel="stylesheet"
+          th:href="@{/css/style.css}" />
 
     <style>
-        table.allow { width: 100%; border-collapse: collapse; }
-        th, td { border: 1px solid #ddd; padding: 8px; }
-        th { background: #f4f4f4; }
-        tr:hover { background: #f9f9f9; }
-        input { padding: 6px; width: 300px; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        th {
+            background: #f4f4f4;
+        }
+
+        tr:hover {
+            background: #f9f9f9;
+        }
 
         .tabs {
             display: flex;
             margin-bottom: 15px;
             border-bottom: 2px solid #ddd;
-
-             /* FIX 👇 */
-            color: #555;              /* visible when inactive */
-
         }
 
         .tab {
@@ -28,6 +42,7 @@
             border: none;
             background: none;
             font-weight: bold;
+            color: #555;
         }
 
         .tab.active {
@@ -35,28 +50,63 @@
             color: #4CAF50;
         }
 
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
     </style>
 
     <script>
+
         function showTab(tabId) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
 
-            document.getElementById(tabId + '-tab').classList.add('active');
-            document.getElementById(tabId).classList.add('active');
+            document.querySelectorAll('.tab')
+                .forEach(t =>
+                    t.classList.remove('active')
+                );
 
-            document.getElementById("search").value = "";
+            document.querySelectorAll('.tab-content')
+                .forEach(c =>
+                    c.classList.remove('active')
+                );
+
+            document.getElementById(
+                tabId + '-tab'
+            ).classList.add('active');
+
+            document.getElementById(
+                tabId
+            ).classList.add('active');
+
         }
 
         function searchPayment() {
-            let filter = document.getElementById("search").value.toLowerCase();
-            document.querySelectorAll(".tab-content.active .postedPayment-row").forEach(row => {
-                row.style.display = row.innerText.toLowerCase().includes(filter) ? "" : "none";
+
+            let filter =
+                document.getElementById(
+                    "search"
+                ).value.toLowerCase();
+
+            document.querySelectorAll(
+                ".tab-content.active .payment-row"
+            ).forEach(row => {
+
+                row.style.display =
+                    row.innerText
+                        .toLowerCase()
+                        .includes(filter)
+                        ? ""
+                        : "none";
+
             });
         }
+
     </script>
+
 </head>
 
 <body onload="showTab('in-progress')">
@@ -65,95 +115,188 @@
 
 <h2>Payments</h2>
 
+
 <div class="tabs">
-    <button id="in-progress-tab" class="tab"
+
+    <button id="in-progress-tab"
+            class="tab"
             onclick="showTab('in-progress')">
+
         ⏳ In-Progress Payments
+
     </button>
 
-    <button id="posted-tab" class="tab"
+    <button id="posted-tab"
+            class="tab"
             onclick="showTab('posted')">
+
         ✅ Posted Payments
+
     </button>
+
 </div>
 
-<div style="margin-bottom: 15px; display:flex; justify-content: space-between;">
-    <input type="text" id="search"
+
+<div style="
+        margin-bottom:15px;
+        display:flex;
+        justify-content:space-between;">
+
+    <input type="text"
+           id="search"
            onkeyup="searchPayment()"
-           placeholder="Search customer, phone, reference..." />
+           placeholder="Search customer, cheque, reference..." />
 
     <a th:href="@{/admin/payments/new}"
-       class="btn btn-primary"
-       style="padding:6px 12px; background:#4CAF50; color:white; border-radius:4px;">
+       style="
+           padding:6px 12px;
+           background:#4CAF50;
+           color:white;
+           border-radius:4px;">
+
         + Add Manual Payment
+
     </a>
+
 </div>
 
-<!-- ================= IN PROGRESS ================= -->
-<div id="in-progress" class="tab-content">
+
+<!-- IN PROGRESS -->
+
+<div id="in-progress"
+     class="tab-content">
+
     <table>
+
         <thead>
+
         <tr>
             <th>Date</th>
             <th>Customer</th>
-            <th>Phone</th>
             <th>Amount</th>
             <th>Mode</th>
             <th>Reference</th>
+            <th>Bank</th>
+            <th>Cheque No.</th>
+            <th>Cheque Date</th>
             <th>Action</th>
         </tr>
+
         </thead>
+
         <tbody>
-        <tr th:each="p : ${inProgressPayments}" class="postedPayment-row">
-            <td th:text="${p.createdAt}"></td>
+
+        <tr th:each="p : ${inProgressPayments}"
+            class="payment-row">
+
+            <td th:text="${p.paymentDate}"></td>
+
             <td th:text="${p.customer.businessName}"></td>
-            <td th:text="${p.phoneNumber}"></td>
-            <td th:text="${#numbers.formatDecimal(p.amount,1,'COMMA',2,'POINT')}"></td>
-            <td th:text="${p.paymentMode}"></td>
-            <td th:text="${p.reference}"></td>
-            <td>
-                <form th:action="@{'/admin/payments/post/' + ${p.id}}"
-                      method="post"
-                      style="display:inline;">
-                    <button type="submit"
-                            class="btn btn-success"
-                            onclick="return confirm('Post this postedPayment?');">
-                        Post
-                    </button>
-                </form>
+
+            <td th:text="${#numbers.formatDecimal(
+                    p.amount,1,'COMMA',2,'POINT')}">
             </td>
+
+            <td th:text="${p.paymentMode}"></td>
+
+            <td th:text="${p.reference}"></td>
+
+            <td th:text="${p.bank != null
+                    ? p.bank.name
+                    : ''}">
+            </td>
+
+            <td th:text="${p.chequeNumber}"></td>
+
+            <td th:text="${p.chequeDate}"></td>
+
+            <td>
+
+                <form th:action="@{/admin/payments/post/{id}(id=${p.id})}"
+                      method="post">
+
+                    <button type="submit"
+                            th:if="${p.status.name() == 'READY_TO_POST'}"
+                            onclick="return confirm('Post this payment?');">
+
+                        Post
+
+                    </button>
+
+                </form>
+
+            </td>
+
         </tr>
+
         </tbody>
+
     </table>
+
 </div>
 
-<!-- ================= POSTED ================= -->
-<div id="posted" class="tab-content">
+
+<!-- POSTED -->
+
+<div id="posted"
+     class="tab-content">
+
     <table>
+
         <thead>
+
         <tr>
             <th>Date</th>
             <th>Customer</th>
-            <th>Phone</th>
             <th>Paid Amount</th>
-            <th>Unallocated Amount</th>
+            <th>Unallocated</th>
             <th>Mode</th>
             <th>Reference</th>
+            <th>Bank</th>
+            <th>Cheque No.</th>
+            <th>Cheque Date</th>
         </tr>
+
         </thead>
+
         <tbody>
-        <tr th:each="p : ${payments}" class="postedPayment-row">
+
+        <tr th:each="p : ${payments}"
+            class="payment-row">
+
             <td th:text="${p.paymentDate}"></td>
+
             <td th:text="${p.customer.businessName}"></td>
-            <td th:text="${p.phoneNumber}"></td>
-            <td th:text="${#numbers.formatDecimal(p.amount,1,'COMMA',2,'POINT')}"></td>
-            <td th:text="${#numbers.formatDecimal(p.unallocatedAmount,1,'COMMA',2,'POINT')}"></td>
+
+            <td th:text="${#numbers.formatDecimal(
+                    p.amount,1,'COMMA',2,'POINT')}">
+            </td>
+
+            <td th:text="${#numbers.formatDecimal(
+                    p.unallocatedAmount,1,'COMMA',2,'POINT')}">
+            </td>
+
             <td th:text="${p.paymentMode}"></td>
+
             <td th:text="${p.reference}"></td>
+
+            <td th:text="${p.bank != null
+                    ? p.bank.name
+                    : ''}">
+            </td>
+
+            <td th:text="${p.chequeNumber}"></td>
+
+            <td th:text="${p.chequeDate}"></td>
+
         </tr>
+
         </tbody>
+
     </table>
+
 </div>
 
 </body>
+
 </html>

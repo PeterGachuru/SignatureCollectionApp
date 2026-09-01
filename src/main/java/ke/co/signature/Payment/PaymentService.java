@@ -43,7 +43,7 @@ public class PaymentService {
         // ✅ Create payment record
         PostedPayment postedPayment = new PostedPayment();
         postedPayment.setCustomer(creditSale.getCustomer());
-        postedPayment.setCreditSale(creditSale);
+//        postedPayment.setCreditSale(creditSale);
         postedPayment.setAmount(amountPaid);
         postedPayment.setReference(mpesaReceipt);
         postedPayment.setPhoneNumber(phone);

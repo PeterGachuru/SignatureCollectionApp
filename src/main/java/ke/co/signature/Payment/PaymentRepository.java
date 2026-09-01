@@ -19,7 +19,7 @@ public interface PaymentRepository extends JpaRepository<PostedPayment, Long> {
     List<PostedPayment> findByCustomer(Customer customer);
 
     // ✅ Payments for a specific credit sale
-    List<PostedPayment> findByCreditSaleId(Long creditSaleId);
+//    List<PostedPayment> findByCreditSaleId(Long creditSaleId);
 
     List<PostedPayment> findAllByOrderByPaymentDateDesc();
 

@@ -35,7 +35,6 @@ public class ConfigurationService {
 
                     return regionRepository.save(r);
                 });
-
     }
 
     public CustomerUnit createAndReturnCustomerUnit(String name) {
