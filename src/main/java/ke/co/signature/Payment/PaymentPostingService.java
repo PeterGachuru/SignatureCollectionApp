@@ -388,6 +388,27 @@ public class PaymentPostingService {
             }
 
             if (payment.getChequeDate() == null) {
+                throw new IllegalStateException(
+                        "Cheque date is required."
+                );
+            }
+
+            LocalDate today = LocalDate.now();
+
+            if (payment.getChequeDate().isAfter(today)) {
+
+                throw new IllegalStateException(
+                        "This cheque cannot be posted yet. " +
+                                "The cheque date is " +
+                                payment.getChequeDate() +
+                                ", while today is " +
+                                today +
+                                "."
+                );
+            }
+
+
+            if (payment.getChequeDate() == null) {
 
                 throw new IllegalArgumentException(
                         "Cheque date is required."

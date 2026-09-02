@@ -1,370 +1,224 @@
-/* =========================
-   Dashboard Container
-========================= */
-
 .dashboard-container {
-    width: 100%;
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 25px;
+    padding: 20px;
+    max-width: 1500px;
+    margin: auto;
 }
-
-
-/* =========================
-   Dashboard Header
-========================= */
 
 .dashboard-header {
-    background: #ffffff;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 25px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
 }
-
 
 .dashboard-header h2 {
-    color: #004080;
-    margin-bottom: 8px;
+    margin-bottom: 5px;
 }
-
 
 .subtitle {
-    color: #666;
-    font-size: 15px;
+    color: #777;
+    margin-top: 0;
 }
 
 
+/* =========================================================
+   LATEST UPLOAD
+   ========================================================= */
 
-/* =========================
-   Sections
-========================= */
+.upload-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: center;
+
+    padding: 15px;
+    margin-bottom: 25px;
+
+    background: #f5f5f5;
+    border-left: 4px solid #4CAF50;
+
+    border-radius: 5px;
+}
+
+.upload-info div {
+    display: flex;
+    gap: 5px;
+}
+
+.no-upload {
+    padding: 20px;
+    margin-bottom: 25px;
+
+    background: #fff3cd;
+    border: 1px solid #ffeeba;
+
+    border-radius: 5px;
+
+    color: #856404;
+}
+
+
+/* =========================================================
+   SECTIONS
+   ========================================================= */
 
 .section {
     margin-bottom: 30px;
 }
 
-
 .section h3 {
-    color:#004080;
-    margin-bottom:15px;
-    font-size:20px;
+    margin-bottom: 15px;
+    color: #333;
 }
 
 
-
-/* =========================
-   Dashboard Cards
-========================= */
+/* =========================================================
+   CARDS
+   ========================================================= */
 
 .dashboard-cards {
-
-    display:grid;
+    display: grid;
 
     grid-template-columns:
-        repeat(auto-fit,minmax(220px,1fr));
+        repeat(auto-fit, minmax(220px, 1fr));
 
-    gap:20px;
-
+    gap: 15px;
 }
-
 
 .card {
+    background: white;
 
-    background:white;
-    padding:20px;
+    border: 1px solid #ddd;
 
-    border-radius:12px;
+    border-radius: 8px;
+
+    padding: 20px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
 
     box-shadow:
-        0 4px 12px rgba(0,0,0,0.1);
+        0 2px 6px rgba(0, 0, 0, 0.05);
 
-    border-left:5px solid #004080;
-
+    transition:
+        transform 0.15s ease,
+        box-shadow 0.15s ease;
 }
 
+.card:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.card-icon {
+    font-size: 32px;
+}
 
 .card h4 {
+    margin: 0 0 8px 0;
 
-    color:#555;
+    color: #666;
 
-    font-size:15px;
-
-    margin-bottom:15px;
-
+    font-size: 14px;
 }
-
 
 .card p {
+    margin: 0;
 
-    font-size:28px;
+    font-size: 24px;
 
-    font-weight:bold;
+    font-weight: bold;
 
-    color:#004080;
-
+    color: #222;
 }
 
 
-
-/* Highlight cards */
+/* =========================================================
+   CARD TYPES
+   ========================================================= */
 
 .card.highlight {
-    border-left-color:#0066cc;
+    border-left: 5px solid #2196F3;
 }
-
-
-.card.warning {
-
-    border-left-color:#e67e22;
-
-}
-
-
-.card.warning p {
-
-    color:#e67e22;
-
-}
-
-
 
 .card.success {
+    border-left: 5px solid #4CAF50;
+}
 
-    border-left-color:#27ae60;
+.card.warning {
+    border-left: 5px solid #FF9800;
+}
 
+.card.debt-card {
+    border-left: 5px solid #F44336;
 }
 
 
-.card.success p {
-
-    color:#27ae60;
-
-}
-
-
-
-/* =========================
-   Tables
-========================= */
-
+/* =========================================================
+   TABLE
+   ========================================================= */
 
 .table-container {
+    overflow-x: auto;
 
-    width:100%;
+    background: white;
 
-    overflow-x:auto;
+    border-radius: 8px;
 
-    background:white;
-
-    border-radius:10px;
-
-    box-shadow:
-        0 3px 10px rgba(0,0,0,.1);
-
+    border: 1px solid #ddd;
 }
-
-
 
 table {
+    width: 100%;
 
-    width:100%;
-
-    border-collapse:collapse;
-
-    min-width:650px;
-
+    border-collapse: collapse;
 }
 
+th,
+td {
+    padding: 12px;
 
-thead {
+    border-bottom: 1px solid #eee;
 
-    background:#004080;
-
-    color:white;
-
+    text-align: left;
 }
 
+th {
+    background: #f4f4f4;
 
-th, td {
-
-    padding:12px 15px;
-
-    text-align:left;
-
-    border-bottom:1px solid #ddd;
-
+    font-weight: bold;
 }
-
 
 tbody tr:hover {
-
-    background:#f5f9ff;
-
+    background: #fafafa;
 }
 
 
+/* =========================================================
+   MOBILE
+   ========================================================= */
 
-/* =========================
-   Tablet
-========================= */
-
-@media(max-width:900px){
-
+@media (max-width: 768px) {
 
     .dashboard-container {
-
-        padding:20px;
-
+        padding: 10px;
     }
-
-
-    .dashboard-header {
-
-        padding:18px;
-
-    }
-
-
-    .section h3 {
-
-        font-size:18px;
-
-    }
-
-
-    .card {
-
-        padding:18px;
-
-    }
-
-
-}
-
-
-
-/* =========================
-   Mobile
-========================= */
-
-@media(max-width:600px){
-
-
-    .dashboard-container {
-
-        padding:15px;
-
-    }
-
-
-
-    .dashboard-header {
-
-        padding:15px;
-
-        margin-bottom:20px;
-
-    }
-
-
-
-    .dashboard-header h2 {
-
-        font-size:22px;
-
-    }
-
-
-
-    .subtitle {
-
-        font-size:14px;
-
-    }
-
-
 
     .dashboard-cards {
-
-        grid-template-columns:1fr;
-
-        gap:15px;
-
+        grid-template-columns: 1fr;
     }
 
-
-
-    .card {
-
-        padding:16px;
-
+    .upload-info {
+        flex-direction: column;
+        align-items: flex-start;
     }
-
-
-
-    .card h4 {
-
-        font-size:14px;
-
-    }
-
-
 
     .card p {
-
-        font-size:24px;
-
+        font-size: 20px;
     }
-
-
-
-    .section h3 {
-
-        font-size:17px;
-
-    }
-
-
-
-    th, td {
-
-        padding:10px;
-
-        font-size:14px;
-
-    }
-
-
-}
-
-
-
-/* =========================
-   Very Small Phones
-========================= */
-
-@media(max-width:360px){
-
-
-    .dashboard-container {
-
-        padding:10px;
-
-    }
-
-
-    .dashboard-header h2 {
-
-        font-size:20px;
-
-    }
-
-
-    .card p {
-
-        font-size:22px;
-
-    }
-
 }

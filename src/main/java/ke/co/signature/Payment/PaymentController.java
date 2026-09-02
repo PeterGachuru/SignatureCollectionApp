@@ -10,6 +10,10 @@ import ke.co.signature.DebtAgeingUpload.DebtAgeingUploadRepository;
 import ke.co.signature.Payment.PaymentInProgress.PaymentInProgress;
 import ke.co.signature.Payment.PaymentInProgress.PaymentInProgressRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -47,26 +51,142 @@ public class PaymentController {
 
 
     @GetMapping
-    public String listPayments(Model model) {
+    public String listPayments(
+            @RequestParam(defaultValue = "in-progress")
+            String tab,
 
-        List<PaymentInProgress>
-                inProgressPayments =
-                paymentInProgressRepository
-                        .findAllByOrderByCreatedAtDesc();
+            @RequestParam(defaultValue = "")
+            String search,
 
-        List<PostedPayment>
+            @RequestParam(defaultValue = "0")
+            int page,
+
+            @RequestParam(defaultValue = "20")
+            int size,
+
+            Model model) {
+
+        /*
+         * Prevent invalid page sizes.
+         */
+        if (size != 10 &&
+                size != 20 &&
+                size != 50 &&
+                size != 100) {
+
+            size = 20;
+        }
+
+        /*
+         * Prevent negative page numbers.
+         */
+        if (page < 0) {
+            page = 0;
+        }
+
+        Pageable pageable;
+
+        if ("posted".equals(tab)) {
+
+            pageable =
+                    PageRequest.of(
+                            page,
+                            size,
+                            Sort.by(
+                                    Sort.Direction.DESC,
+                                    "paymentDate"
+                            )
+                    );
+
+            Page<PostedPayment> postedPayments;
+
+            if (search == null ||
+                    search.trim().isEmpty()) {
+
                 postedPayments =
-                paymentRepository
-                        .findAllByOrderByPaymentDateDesc();
+                        paymentRepository
+                                .findAll(pageable);
+
+            } else {
+
+                String searchTerm =
+                        search.trim();
+
+                postedPayments =
+                        paymentRepository
+                                .findByCustomer_BusinessNameContainingIgnoreCaseOrReferenceContainingIgnoreCase(
+                                        searchTerm,
+                                        searchTerm,
+                                        pageable
+                                );
+            }
+
+            model.addAttribute(
+                    "payments",
+                    postedPayments
+            );
+
+        } else {
+
+            /*
+             * Default tab = IN PROGRESS
+             */
+            tab = "in-progress";
+
+            pageable =
+                    PageRequest.of(
+                            page,
+                            size,
+                            Sort.by(
+                                    Sort.Direction.DESC,
+                                    "createdAt"
+                            )
+                    );
+
+            Page<PaymentInProgress> inProgressPayments;
+
+            if (search == null ||
+                    search.trim().isEmpty()) {
+
+                inProgressPayments =
+                        paymentInProgressRepository
+                                .findAllByOrderByCreatedAtDesc(
+                                        pageable
+                                );
+
+            } else {
+
+                String searchTerm =
+                        search.trim();
+
+                inProgressPayments =
+                        paymentInProgressRepository
+                                .findByCustomer_BusinessNameContainingIgnoreCaseOrReferenceContainingIgnoreCase(
+                                        searchTerm,
+                                        searchTerm,
+                                        pageable
+                                );
+            }
+
+            model.addAttribute(
+                    "inProgressPayments",
+                    inProgressPayments
+            );
+        }
 
         model.addAttribute(
-                "inProgressPayments",
-                inProgressPayments
+                "activeTab",
+                tab
         );
 
         model.addAttribute(
-                "payments",
-                postedPayments
+                "search",
+                search
+        );
+
+        model.addAttribute(
+                "size",
+                size
         );
 
         return "payments/payment-list";
@@ -418,7 +538,6 @@ public class PaymentController {
 
         return "redirect:/admin/payments";
     }
-
 
     public record CustomerDebtResponse(
             Long uploadId,

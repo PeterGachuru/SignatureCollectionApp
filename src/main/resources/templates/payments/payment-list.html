@@ -17,7 +17,8 @@
             border-collapse: collapse;
         }
 
-        th, td {
+        th,
+        td {
             border: 1px solid #ddd;
             padding: 8px;
         }
@@ -50,109 +51,189 @@
             color: #4CAF50;
         }
 
-        .tab-content {
-            display: none;
+        .search-bar {
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
         }
 
-        .tab-content.active {
-            display: block;
+        .search-left {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .search-input {
+            padding: 8px;
+            width: 320px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .search-button {
+            padding: 8px 15px;
+            border: none;
+            background: #2196F3;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .clear-button {
+            padding: 8px 15px;
+            border: 1px solid #ccc;
+            background: white;
+            color: #555;
+            border-radius: 4px;
+            text-decoration: none;
+        }
+
+        .add-button {
+            padding: 8px 12px;
+            background: #4CAF50;
+            color: white;
+            border-radius: 4px;
+            text-decoration: none;
+        }
+
+        .pagination-container {
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .pagination {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+
+        .pagination a,
+        .pagination span {
+            padding: 6px 10px;
+            border: 1px solid #ddd;
+            text-decoration: none;
+            color: #333;
+            border-radius: 3px;
+        }
+
+        .pagination .active {
+            background: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+        }
+
+        .pagination .disabled {
+            color: #aaa;
+            pointer-events: none;
+        }
+
+        .page-size {
+            padding: 6px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
         }
 
     </style>
 
-    <script>
-
-        function showTab(tabId) {
-
-            document.querySelectorAll('.tab')
-                .forEach(t =>
-                    t.classList.remove('active')
-                );
-
-            document.querySelectorAll('.tab-content')
-                .forEach(c =>
-                    c.classList.remove('active')
-                );
-
-            document.getElementById(
-                tabId + '-tab'
-            ).classList.add('active');
-
-            document.getElementById(
-                tabId
-            ).classList.add('active');
-
-        }
-
-        function searchPayment() {
-
-            let filter =
-                document.getElementById(
-                    "search"
-                ).value.toLowerCase();
-
-            document.querySelectorAll(
-                ".tab-content.active .payment-row"
-            ).forEach(row => {
-
-                row.style.display =
-                    row.innerText
-                        .toLowerCase()
-                        .includes(filter)
-                        ? ""
-                        : "none";
-
-            });
-        }
-
-    </script>
-
 </head>
 
-<body onload="showTab('in-progress')">
+<body>
 
 <div th:replace="fragments/header :: header"></div>
 
 <h2>Payments</h2>
 
 
+<!-- ========================= -->
+<!-- TABS -->
+<!-- ========================= -->
+
 <div class="tabs">
 
-    <button id="in-progress-tab"
-            class="tab"
-            onclick="showTab('in-progress')">
+    <a th:href="@{/admin/payments(
+            tab='in-progress',
+            page=0,
+            size=${size},
+            search=${search})}"
+       class="tab"
+       th:classappend="${activeTab == 'in-progress'} ? ' active'">
 
         ⏳ In-Progress Payments
 
-    </button>
+    </a>
 
-    <button id="posted-tab"
-            class="tab"
-            onclick="showTab('posted')">
+
+    <a th:href="@{/admin/payments(
+            tab='posted',
+            page=0,
+            size=${size},
+            search=${search})}"
+       class="tab"
+       th:classappend="${activeTab == 'posted'} ? ' active'">
 
         ✅ Posted Payments
 
-    </button>
+    </a>
 
 </div>
 
 
-<div style="
-        margin-bottom:15px;
-        display:flex;
-        justify-content:space-between;">
+<!-- ========================= -->
+<!-- SEARCH -->
+<!-- ========================= -->
 
-    <input type="text"
-           id="search"
-           onkeyup="searchPayment()"
-           placeholder="Search customer, cheque, reference..." />
+<div class="search-bar">
+
+    <form method="get"
+          th:action="@{/admin/payments}"
+          class="search-left">
+
+        <input type="hidden"
+               name="tab"
+               th:value="${activeTab}" />
+
+        <input type="hidden"
+               name="page"
+               value="0" />
+
+        <input type="hidden"
+               name="size"
+               th:value="${size}" />
+
+        <input type="text"
+               name="search"
+               th:value="${search}"
+               class="search-input"
+               placeholder="Search customer or reference..." />
+
+        <button type="submit"
+                class="search-button">
+
+            🔍 Search
+
+        </button>
+
+        <a th:href="@{/admin/payments(
+                tab=${activeTab},
+                page=0,
+                size=${size})}"
+           class="clear-button">
+
+            Clear
+
+        </a>
+
+    </form>
+
 
     <a th:href="@{/admin/payments/new}"
-       style="
-           padding:6px 12px;
-           background:#4CAF50;
-           color:white;
-           border-radius:4px;">
+       class="add-button">
 
         + Add Manual Payment
 
@@ -161,16 +242,18 @@
 </div>
 
 
+<!-- ================================================= -->
 <!-- IN PROGRESS -->
+<!-- ================================================= -->
 
-<div id="in-progress"
-     class="tab-content">
+<div th:if="${activeTab == 'in-progress'}">
 
     <table>
 
         <thead>
 
         <tr>
+
             <th>Date</th>
             <th>Customer</th>
             <th>Amount</th>
@@ -180,21 +263,26 @@
             <th>Cheque No.</th>
             <th>Cheque Date</th>
             <th>Action</th>
+
         </tr>
 
         </thead>
 
+
         <tbody>
 
-        <tr th:each="p : ${inProgressPayments}"
-            class="payment-row">
+        <tr th:each="p : ${inProgressPayments.content}">
 
             <td th:text="${p.paymentDate}"></td>
 
             <td th:text="${p.customer.businessName}"></td>
 
             <td th:text="${#numbers.formatDecimal(
-                    p.amount,1,'COMMA',2,'POINT')}">
+                    p.amount,
+                    1,
+                    'COMMA',
+                    2,
+                    'POINT')}">
             </td>
 
             <td th:text="${p.paymentMode}"></td>
@@ -225,6 +313,22 @@
 
                 </form>
 
+                <span th:if="${p.status.name() != 'READY_TO_POST'}"
+                      th:text="${p.status}">
+                </span>
+
+            </td>
+
+        </tr>
+
+
+        <tr th:if="${inProgressPayments.empty}">
+
+            <td colspan="9"
+                style="text-align:center;">
+
+                No in-progress payments found.
+
             </td>
 
         </tr>
@@ -233,19 +337,150 @@
 
     </table>
 
+
+    <!-- IN-PROGRESS PAGINATION -->
+
+    <div class="pagination-container">
+
+        <div>
+
+            Showing
+
+            <strong
+                    th:text="${inProgressPayments.numberOfElements}">
+            </strong>
+
+            of
+
+            <strong
+                    th:text="${inProgressPayments.totalElements}">
+            </strong>
+
+            payments
+
+        </div>
+
+
+        <div class="pagination">
+
+            <!-- Previous -->
+
+            <a th:href="@{/admin/payments(
+                    tab='in-progress',
+                    page=${inProgressPayments.number - 1},
+                    size=${size},
+                    search=${search})}"
+               th:classappend="${inProgressPayments.first}
+                    ? ' disabled'">
+
+                Previous
+
+            </a>
+
+
+            <!-- Page numbers -->
+
+            <span th:each="i : ${#numbers.sequence(
+                    0,
+                    inProgressPayments.totalPages - 1)}"
+                  th:if="${inProgressPayments.totalPages > 0}">
+
+                <a th:if="${i == inProgressPayments.number}"
+                   class="active"
+                   th:text="${i + 1}">
+                </a>
+
+                <a th:if="${i != inProgressPayments.number}"
+                   th:href="@{/admin/payments(
+                       tab='in-progress',
+                       page=${i},
+                       size=${size},
+                       search=${search})}"
+                   th:text="${i + 1}">
+                </a>
+
+            </span>
+
+
+            <!-- Next -->
+
+            <a th:href="@{/admin/payments(
+                    tab='in-progress',
+                    page=${inProgressPayments.number + 1},
+                    size=${size},
+                    search=${search})}"
+               th:classappend="${inProgressPayments.last}
+                    ? ' disabled'">
+
+                Next
+
+            </a>
+
+        </div>
+
+
+        <!-- Page size -->
+
+        <form method="get"
+              th:action="@{/admin/payments}">
+
+            <input type="hidden"
+                   name="tab"
+                   value="in-progress" />
+
+            <input type="hidden"
+                   name="page"
+                   value="0" />
+
+            <input type="hidden"
+                   name="search"
+                   th:value="${search}" />
+
+            <select name="size"
+                    class="page-size"
+                    onchange="this.form.submit()">
+
+                <option value="10"
+                        th:selected="${size == 10}">
+                    10 per page
+                </option>
+
+                <option value="20"
+                        th:selected="${size == 20}">
+                    20 per page
+                </option>
+
+                <option value="50"
+                        th:selected="${size == 50}">
+                    50 per page
+                </option>
+
+                <option value="100"
+                        th:selected="${size == 100}">
+                    100 per page
+                </option>
+
+            </select>
+
+        </form>
+
+    </div>
+
 </div>
 
 
+<!-- ================================================= -->
 <!-- POSTED -->
+<!-- ================================================= -->
 
-<div id="posted"
-     class="tab-content">
+<div th:if="${activeTab == 'posted'}">
 
     <table>
 
         <thead>
 
         <tr>
+
             <th>Date</th>
             <th>Customer</th>
             <th>Paid Amount</th>
@@ -255,25 +490,34 @@
             <th>Bank</th>
             <th>Cheque No.</th>
             <th>Cheque Date</th>
+
         </tr>
 
         </thead>
 
+
         <tbody>
 
-        <tr th:each="p : ${payments}"
-            class="payment-row">
+        <tr th:each="p : ${payments.content}">
 
             <td th:text="${p.paymentDate}"></td>
 
             <td th:text="${p.customer.businessName}"></td>
 
             <td th:text="${#numbers.formatDecimal(
-                    p.amount,1,'COMMA',2,'POINT')}">
+                    p.amount,
+                    1,
+                    'COMMA',
+                    2,
+                    'POINT')}">
             </td>
 
             <td th:text="${#numbers.formatDecimal(
-                    p.unallocatedAmount,1,'COMMA',2,'POINT')}">
+                    p.unallocatedAmount,
+                    1,
+                    'COMMA',
+                    2,
+                    'POINT')}">
             </td>
 
             <td th:text="${p.paymentMode}"></td>
@@ -291,9 +535,144 @@
 
         </tr>
 
+
+        <tr th:if="${payments.empty}">
+
+            <td colspan="9"
+                style="text-align:center;">
+
+                No posted payments found.
+
+            </td>
+
+        </tr>
+
         </tbody>
 
     </table>
+
+
+    <!-- POSTED PAGINATION -->
+
+    <div class="pagination-container">
+
+        <div>
+
+            Showing
+
+            <strong
+                    th:text="${payments.numberOfElements}">
+            </strong>
+
+            of
+
+            <strong
+                    th:text="${payments.totalElements}">
+            </strong>
+
+            payments
+
+        </div>
+
+
+        <div class="pagination">
+
+            <a th:href="@{/admin/payments(
+                    tab='posted',
+                    page=${payments.number - 1},
+                    size=${size},
+                    search=${search})}"
+               th:classappend="${payments.first}
+                    ? ' disabled'">
+
+                Previous
+
+            </a>
+
+
+            <span th:each="i : ${#numbers.sequence(
+                    0,
+                    payments.totalPages - 1)}"
+                  th:if="${payments.totalPages > 0}">
+
+                <a th:if="${i == payments.number}"
+                   class="active"
+                   th:text="${i + 1}">
+                </a>
+
+                <a th:if="${i != payments.number}"
+                   th:href="@{/admin/payments(
+                       tab='posted',
+                       page=${i},
+                       size=${size},
+                       search=${search})}"
+                   th:text="${i + 1}">
+                </a>
+
+            </span>
+
+
+            <a th:href="@{/admin/payments(
+                    tab='posted',
+                    page=${payments.number + 1},
+                    size=${size},
+                    search=${search})}"
+               th:classappend="${payments.last}
+                    ? ' disabled'">
+
+                Next
+
+            </a>
+
+        </div>
+
+
+        <!-- Page size -->
+
+        <form method="get"
+              th:action="@{/admin/payments}">
+
+            <input type="hidden"
+                   name="tab"
+                   value="posted" />
+
+            <input type="hidden"
+                   name="page"
+                   value="0" />
+
+            <input type="hidden"
+                   name="search"
+                   th:value="${search}" />
+
+            <select name="size"
+                    class="page-size"
+                    onchange="this.form.submit()">
+
+                <option value="10"
+                        th:selected="${size == 10}">
+                    10 per page
+                </option>
+
+                <option value="20"
+                        th:selected="${size == 20}">
+                    20 per page
+                </option>
+
+                <option value="50"
+                        th:selected="${size == 50}">
+                    50 per page
+                </option>
+
+                <option value="100"
+                        th:selected="${size == 100}">
+                    100 per page
+                </option>
+
+            </select>
+
+        </form>
+
+    </div>
 
 </div>
 

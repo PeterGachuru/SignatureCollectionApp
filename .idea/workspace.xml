@@ -5,39 +5,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ab076043-b6c6-4048-ad5f-01378d6d85a6" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/ke/co/signature/Configs/Bank/Bank.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/ke/co/signature/Configs/Bank/BankController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/ke/co/signature/Configs/Bank/BankRepository.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/templates/config/banks.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/uiDesigner.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ke/co/signature/Configs/ConfigurationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ke/co/signature/Configs/ConfigurationService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ke/co/signature/CreditSale/CreditSaleService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ke/co/signature/CreditSale/CreditSaleService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ke/co/signature/Customer/CustomerService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ke/co/signature/Customer/CustomerService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ke/co/signature/DebtAgeingUpload/DebtAgeingController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ke/co/signature/DebtAgeingUpload/DebtAgeingController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ke/co/signature/DebtAgeingUpload/DebtAgeingRecord.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ke/co/signature/DebtAgeingUpload/DebtAgeingRecord.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ke/co/signature/Dashboard/DebtClassificationTotalsDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ke/co/signature/AuthConfigs/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ke/co/signature/AuthConfigs/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ke/co/signature/Dashboard/DashboardSummaryDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ke/co/signature/Dashboard/DashboardSummaryDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ke/co/signature/Dashboard/Dashboardservice.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ke/co/signature/Dashboard/Dashboardservice.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ke/co/signature/Dashboard/DebtClassificationSummaryDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ke/co/signature/Dashboard/DebtClassificationSummaryDTO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/ke/co/signature/DebtAgeingUpload/DebtAgeingRecordRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ke/co/signature/DebtAgeingUpload/DebtAgeingRecordRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ke/co/signature/DebtAgeingUpload/DebtAgeingService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ke/co/signature/DebtAgeingUpload/DebtAgeingService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/ke/co/signature/DebtAgeingUpload/DebtAgeingUploadRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ke/co/signature/DebtAgeingUpload/DebtAgeingUploadRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ke/co/signature/HomeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ke/co/signature/Dashboard/HomeController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/ke/co/signature/Payment/PaymentController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ke/co/signature/Payment/PaymentController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ke/co/signature/Payment/PaymentInProgress/PaymentInProgress.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ke/co/signature/Payment/PaymentInProgress/PaymentInProgress.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ke/co/signature/Payment/PaymentInProgress/PaymentInProgressRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ke/co/signature/Payment/PaymentInProgress/PaymentInProgressRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/ke/co/signature/Payment/PaymentPostingService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ke/co/signature/Payment/PaymentPostingService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/ke/co/signature/Payment/PaymentRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ke/co/signature/Payment/PaymentRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ke/co/signature/Payment/PaymentService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ke/co/signature/Payment/PaymentService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ke/co/signature/Payment/PaymentSplit/PaymentSplit.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ke/co/signature/Payment/PaymentSplit/PaymentSplit.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ke/co/signature/Payment/PaymentSplit/PaymentSplitRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ke/co/signature/Payment/PaymentSplit/PaymentSplitRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ke/co/signature/Payment/PostedPayment.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ke/co/signature/Payment/PostedPayment.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/static/css/dashboard.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/static/css/dashboard.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/config/config-main.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/config/config-main.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/customer/dashboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/customer/dashboard.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/fragments/customer-modal.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/fragments/customer-modal.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/fragments/header.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/fragments/header.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/templates/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/home.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/login.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/payments/payment-form.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/payments/payment-form.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/payments/payment-in-progress-list.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/payments/payment-in-progress-list.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/templates/payments/payment-list.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/payments/payment-list.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -53,8 +36,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Class" />
         <option value="HTML File" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -73,21 +56,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "main"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="SignatureApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="ke.co.signature.SignatureApplication" />
       <module name="SignatureCollectionApp.main" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="ke.co.signature.*" />
+          <option name="PATTERN" value="ke.co.signature.Dashboard.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>

@@ -4,6 +4,8 @@ import ke.co.signature.Customer.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -23,6 +25,12 @@ public interface PaymentRepository extends JpaRepository<PostedPayment, Long> {
 
     List<PostedPayment> findAllByOrderByPaymentDateDesc();
 
+    Page<PostedPayment>
+    findByCustomer_BusinessNameContainingIgnoreCaseOrReferenceContainingIgnoreCase(
+            String customerName,
+            String reference,
+            Pageable pageable
+    );
 
     @Query("""
         SELECT COALESCE(SUM(p.unallocatedAmount), 0)
@@ -47,4 +55,54 @@ public interface PaymentRepository extends JpaRepository<PostedPayment, Long> {
     BigDecimal totalOverpayments(String username);
 
     List<PostedPayment> findTop5ByCustomer_UsernameOrderByPaymentDateDesc(String username);
+
+    /**
+     * Number of posted payments.
+     */
+    @Override
+    long count();
+
+
+    /**
+     * Total amount of all posted payments.
+     */
+    @Query("""
+        SELECT COALESCE(SUM(p.amount), 0)
+        FROM PostedPayment p
+    """)
+    BigDecimal getTotalPostedAmount();
+
+
+    /**
+     * Count distinct customers from a supplied
+     * customer list who have made a posted payment.
+     *
+     * This is used for the dashboard's latest ageing upload.
+     */
+    @Query("""
+        SELECT COUNT(DISTINCT p.customer.id)
+        FROM PostedPayment p
+        WHERE p.customer.id IN :customerIds
+    """)
+    long countDistinctCustomersWhoHavePaid(
+            @Param("customerIds")
+            List<Long> customerIds
+    );
+
+
+    /**
+     * Get customer IDs that have made posted payments.
+     *
+     * Only customers contained in the latest ageing upload
+     * are considered.
+     */
+    @Query("""
+        SELECT DISTINCT p.customer.id
+        FROM PostedPayment p
+        WHERE p.customer.id IN :customerIds
+    """)
+    List<Long> findCustomersWhoHavePaid(
+            @Param("customerIds")
+            List<Long> customerIds
+    );
 }
