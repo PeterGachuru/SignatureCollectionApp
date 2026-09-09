@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>MPESA Payment</title>
+    <style>
+        .card {
+            max-width: 500px;
+            margin: 40px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: #fff;
+        }
+        label { font-weight: bold; }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 6px 0 15px;
+        }
+        button {
+            background: #2e7d32;
+            color: white;
+            padding: 10px;
+            width: 100%;
+            border: none;
+            font-size: 16px;
+            border-radius: 4px;
+        }
+        .info {
+            background: #f4f6f8;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #2e7d32;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+
+    <h2>Initiate MPESA Push</h2>
+
+    <div class="info">
+        Customer:
+        <strong th:text="${customerName}"></strong>
+    </div>
+
+    <form th:action="@{/admin/mpesa/submit}"
+          th:object="${stk}"
+          method="post">
+
+        <label>Phone Number</label>
+        <input type="text" th:field="*{phoneNumber}" required />
+
+        <label>Amount (KES)</label>
+        <input type="number" th:field="*{amount}" min="1" step="0.01" required />
+
+        <!-- Hidden system fields -->
+        <input type="hidden" th:field="*{accountReference}" />
+        <input type="hidden" th:field="*{accountReferenceId}" />
+        <input type="hidden" th:field="*{transactionDesc}" />
+
+        <button type="submit">Send MPESA Prompt</button>
+    </form>
+
+</div>
+
+</body>
+</html>

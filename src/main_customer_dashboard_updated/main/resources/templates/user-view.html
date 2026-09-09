@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>View User</title>
+    <th:block th:replace="~{fragments/header :: header-css}"></th:block>
+</head>
+<body>
+
+<div th:replace="fragments/header :: header"></div>
+
+<h2>User Details</h2>
+
+<table border="1" cellpadding="8" cellspacing="0">
+    <tr>
+        <th>ID</th>
+        <td th:text="${user.id}"></td>
+    </tr>
+
+    <tr>
+        <th>Username</th>
+        <td th:text="${user.username}"></td>
+    </tr>
+
+    <tr>
+        <th>Status</th>
+        <td th:text="${user.enabled ? 'Enabled' : 'Disabled'}"></td>
+    </tr>
+
+    <tr>
+        <th>Roles</th>
+        <td>
+            <ul>
+                <li th:each="r : ${user.roles}"
+                    th:text="${r.name}"></li>
+            </ul>
+        </td>
+    </tr>
+</table>
+
+<br/>
+
+<a th:href="@{/admin/users/edit/{id}(id=${user.id})}">✏ Edit</a>
+|
+<a href="/admin/users">← Back to Users</a>
+
+</body>
+</html>

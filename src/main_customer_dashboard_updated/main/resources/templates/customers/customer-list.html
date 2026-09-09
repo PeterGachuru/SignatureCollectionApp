@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Customer List</title>
+    <th:block th:replace="~{fragments/header :: header-css}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <style>
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; }
+        th { background: #f4f4f4; }
+        tr:hover { background: #f9f9f9; }
+        input { margin-bottom: 10px; padding: 5px; width: 300px; }
+    </style>
+</head>
+
+<body>
+
+<div th:replace="fragments/header :: header"></div>
+
+<h2>Customer List</h2>
+
+<!-- Action Buttons -->
+<!-- Search + Actions -->
+<div style="margin-bottom: 15px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:10px;">
+
+    <form th:action="@{/admin/customers/list}"
+          method="get"
+          style="display:flex; flex:1; gap:10px;">
+
+        <input type="text"
+               name="search"
+               th:value="${search}"
+               placeholder="Search by name, code, phone, town, region..."
+               style="flex:1; padding:8px;" />
+
+        <button type="submit"
+                style="padding:8px 15px;
+                       background:#2196F3;
+                       color:white;
+                       border:none;
+                       border-radius:5px;">
+            Search
+        </button>
+    </form>
+
+    <a th:if="${!regionalRep}"
+       th:href="@{/admin/customers/new}"
+       style="padding:8px 15px;
+          background:#4CAF50;
+          color:white;
+          border-radius:5px;
+          text-decoration:none;
+          white-space:nowrap;">
+        + New Customer
+    </a>
+
+</div>
+
+
+<!-- Bulk Upload -->
+<div th:if="${!regionalRep}"
+     style="margin-bottom:20px; padding:15px; border:1px solid #ddd; border-radius:8px; background:#fafafa;">
+
+    <h3>Upload Customers Excel</h3>
+
+    <form th:action="@{/admin/customers/upload}"
+          method="post"
+          enctype="multipart/form-data">
+
+        <input type="file"
+               name="file"
+               accept=".xlsx"
+               required />
+
+        <button type="submit"
+                style="padding:8px 15px;
+                       background:#2196F3;
+                       color:white;
+                       border:none;
+                       border-radius:5px;">
+            Upload Excel
+        </button>
+
+    </form>
+
+    <br/>
+
+    <small>
+        Excel columns:
+        customerCode, username, businessName,
+        contactPerson, phone, email, location
+    </small>
+
+</div>
+
+<table>
+    <thead>
+    <tr>
+        <th>Business Name</th>
+        <th>Code</th>
+        <th>Username</th>
+        <th>Phone</th>
+        <th>Unit</th>
+        <th>Town</th>
+        <th>Region</th>
+        <th>Rep</th>
+        <th>Total Credit</th>
+        <th>Action</th> <!-- NEW COLUMN -->
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr th:each="c : ${customers}" class="customer-row">
+
+        <td th:text="${c.businessName}"></td>
+        <td th:text="${c.customerCode}"></td>
+        <td th:text="${c.username}"></td>
+        <td th:text="${c.phone}"></td>
+
+        <td th:text="${c.unitName}"></td>
+        <td th:text="${c.townName}"></td>
+        <td th:text="${c.regionName}"></td>
+
+        <td th:text="${c.repName}"></td>
+
+        <td th:text="${#numbers.formatDecimal(c.totalCredit,1,'COMMA',2,'POINT')}"></td>
+
+        <!-- ✅ Action Button -->
+        <td>
+            <a th:if="${c.totalCredit > 0}"
+               th:href="@{/admin/mpesa/initiate/{customerId}(customerId=${c.id})}"
+               class="btn"
+               style="padding:4px 8px; background-color:#FF9800; color:white; border-radius:3px; text-decoration:none;">
+                Push MPESA
+            </a>
+        </td>
+
+    </tr>
+    </tbody>
+</table>
+
+<!-- Pagination -->
+<div style="margin-top:20px;
+            display:flex;
+            justify-content:center;
+            gap:8px;
+            flex-wrap:wrap;">
+
+    <!-- Previous -->
+    <a th:if="${currentPage > 0}"
+       th:href="@{/admin/customers/list(
+            page=${currentPage - 1},
+            search=${search}
+       )}"
+       style="padding:6px 12px;
+              border:1px solid #ddd;
+              text-decoration:none;">
+        Previous
+    </a>
+
+    <!-- Page Numbers -->
+    <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+
+        <a th:href="@{/admin/customers/list(
+                page=${i},
+                search=${search}
+            )}"
+
+           th:text="${i + 1}"
+
+           th:style="${i == currentPage}
+                ? 'padding:6px 12px;background:#2196F3;color:white;text-decoration:none;border-radius:4px;'
+                : 'padding:6px 12px;border:1px solid #ddd;text-decoration:none;border-radius:4px;'">
+        </a>
+
+    </span>
+
+    <!-- Next -->
+    <a th:if="${currentPage + 1 < totalPages}"
+       th:href="@{/admin/customers/list(
+            page=${currentPage + 1},
+            search=${search}
+       )}"
+       style="padding:6px 12px;
+              border:1px solid #ddd;
+              text-decoration:none;">
+        Next
+    </a>
+
+</div>
+
+</body>
+</html>

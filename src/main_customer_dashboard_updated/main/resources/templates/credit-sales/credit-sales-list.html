@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Credit Sales</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <th:block th:replace="~{fragments/header :: header-css}"></th:block>
+    <style>
+        table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 8px; }
+        th { background: #f4f4f4; }
+        tr:hover { background: #f9f9f9; }
+        input { margin-bottom: 10px; padding: 5px; width: 300px; }
+        .btn-primary { padding: 6px 12px; text-decoration: none; background-color:#4CAF50; color:white; border-radius:4px; }
+    </style>
+
+    <script>
+        function searchCreditSales() {
+            let filter = document.getElementById("search").value.toLowerCase();
+            document.querySelectorAll(".credit-sale-row").forEach(row => {
+                row.style.display = row.innerText.toLowerCase().includes(filter) ? "" : "none";
+            });
+        }
+    </script>
+</head>
+
+<body>
+<div th:replace="fragments/header :: header"></div>
+
+<h2>Credit Sales</h2>
+
+<div style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+    <input type="text" id="search" onkeyup="searchCreditSales()" placeholder="Search by customer, code, status..." style="flex:1; margin-right:10px;"/>
+    <a th:if="${!regionalRep}"
+       th:href="@{/credit-sales/new}"
+       class="btn-primary">
+        + New Credit Sale
+    </a>
+</div>
+<div  th:if="${!regionalRep}" style="margin-bottom:20px; padding:15px; border:1px solid #ddd; border-radius:5px;">
+    <h3>Bulk Upload Credit Sales</h3>
+
+    <form th:action="@{/credit-sales/upload}" method="post" enctype="multipart/form-data">
+        <input type="file"
+               name="file"
+               accept=".xls,.xlsx"
+               required />
+
+        <button type="submit" class="btn-primary">
+            Upload Excel
+        </button>
+    </form>
+
+    <small>
+        Upload an Excel file containing customer code, amount, sale date,
+        description and other supported fields.
+    </small>
+</div>
+
+<div th:if="${success}" style="color:green;">
+    <span th:text="${success}"></span>
+</div>
+
+<div th:if="${error}" style="color:red;">
+    <span th:text="${error}"></span>
+</div>
+<table>
+    <thead>
+    <tr>
+        <th>Customer Name</th>
+        <th>Customer Code</th>
+        <th>Sale Date</th>
+        <th>Sale Code</th>
+        <th>Gross Amount</th>
+        <th>Discount</th>
+        <th>Invoice Amount</th>
+        <th>Balance</th>
+        <th>Status</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="cs : ${creditSales}" class="credit-sale-row">
+        <td th:text="${cs.customerName}"></td>
+        <td th:text="${cs.customerCode}"></td>
+        <td th:text="${cs.saleDate}"></td>
+        <td th:text="${cs.saleCode}"></td>
+        <td th:text="${#numbers.formatDecimal(cs.grossAmount,1,'COMMA',2,'POINT')}"></td>
+        <td th:text="${#numbers.formatDecimal(cs.discount,1,'COMMA',2,'POINT')}"></td>
+        <td th:text="${#numbers.formatDecimal(cs.invoiceAmount,1,'COMMA',2,'POINT')}"></td>
+        <td th:text="${#numbers.formatDecimal(cs.balance,1,'COMMA',2,'POINT')}"></td>
+        <td th:text="${cs.status}"></td>
+        <td>
+
+
+            <a  th:if="${cs.balance > 0}" th:href="@{/admin/payments/new(creditSaleId=${cs.id})}"
+               class="btn-primary"
+               style="background:#2196F3;">
+                Pay
+            </a>
+
+            <a th:href="@{/credit-sales/{id}(id=${cs.id})}"
+               class="btn-primary"
+               style="background:#555;">
+                View
+            </a>
+        </td>
+
+    </tr>
+    </tbody>
+</table>
+
+<!-- Pagination -->
+<div style="margin-top: 15px; text-align: center;">
+    <span th:if="${totalPages > 1}">
+        <a th:if="${currentPage > 0}"
+           th:href="@{/credit-sales/list(page=${currentPage - 1}, size=10)}">&laquo; Prev</a>
+
+        <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+            <a th:href="@{/credit-sales/list(page=${i}, size=10)}"
+               th:text="${i + 1}"
+               th:classappend="${i == currentPage} ? 'active-page' : ''"
+               style="margin: 0 5px;"></a>
+        </span>
+
+        <a th:if="${currentPage < totalPages - 1}"
+           th:href="@{/credit-sales/list(page=${currentPage + 1}, size=50)}">Next &raquo;</a>
+    </span>
+</div>
+
+<style>
+    .active-page {
+        font-weight: bold;
+        text-decoration: underline;
+    }
+</style>
+
+</body>
+</html>

@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <title>Dashboard</title>
+
+    <th:block
+            th:replace="~{fragments/header :: header-css}">
+    </th:block>
+
+    <link rel="stylesheet"
+          th:href="@{/css/dashboard.css}" />
+
+</head>
+
+<body>
+
+<div th:replace="fragments/header :: header"></div>
+
+
+<div class="dashboard-container">
+
+
+    <!-- ===================================================== -->
+    <!-- HEADER -->
+    <!-- ===================================================== -->
+
+    <div class="dashboard-header">
+
+        <div>
+
+            <h2>Dashboard</h2>
+
+            <p class="subtitle"
+               th:text="${message}">
+                Welcome to Signature Care Collection App
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- LATEST AGEING UPLOAD -->
+    <!-- ===================================================== -->
+
+    <div class="upload-info"
+         th:if="${summary.latestUploadId != null}">
+
+        <div>
+
+            <strong>
+                Latest Debt Ageing
+            </strong>
+
+            <span
+                    th:text="${summary.latestUploadFileName}">
+            </span>
+
+        </div>
+
+        <div>
+
+            Report Date:
+
+            <strong
+                    th:text="${summary.latestReportDate}">
+            </strong>
+
+        </div>
+
+        <div>
+
+            Uploaded:
+
+            <strong
+                    th:text="${summary.latestUploadedAt}">
+            </strong>
+
+        </div>
+
+        <div>
+
+            By:
+
+            <strong
+                    th:text="${summary.latestUploadedBy}">
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <div class="no-upload"
+         th:if="${summary.latestUploadId == null}">
+
+        No debt ageing data has been uploaded yet.
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- FINANCIAL SUMMARY -->
+    <!-- ===================================================== -->
+
+    <div class="section">
+
+        <h3>
+            Financial Overview
+        </h3>
+
+
+        <div class="dashboard-cards">
+
+
+            <!-- TOTAL DEBT -->
+
+            <div class="card debt-card">
+
+                <div class="card-icon">
+                    💰
+                </div>
+
+                <div>
+
+                    <h4>
+                        Total Debt Pending
+                    </h4>
+
+                    <p>
+                        KES
+                        <span
+                                th:text="${#numbers.formatDecimal(
+                                    summary.totalDebtPending,
+                                    1,
+                                    'COMMA',
+                                    2,
+                                    'POINT'
+                                )}">
+                            0.00
+                        </span>
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- TOTAL PAID -->
+
+            <div class="card success">
+
+                <div class="card-icon">
+                    💵
+                </div>
+
+                <div>
+
+                    <h4>
+                        Total Amount Paid
+                    </h4>
+
+                    <p>
+                        KES
+                        <span
+                                th:text="${#numbers.formatDecimal(
+                                    summary.totalAmountPaid,
+                                    1,
+                                    'COMMA',
+                                    2,
+                                    'POINT'
+                                )}">
+                            0.00
+                        </span>
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- CUSTOMER SUMMARY -->
+    <!-- ===================================================== -->
+
+    <div class="section">
+
+        <h3>
+            Customer Overview
+        </h3>
+
+
+        <div class="dashboard-cards">
+
+
+            <!-- TOTAL CUSTOMERS -->
+
+            <div class="card highlight">
+
+                <div class="card-icon">
+                    👥
+                </div>
+
+                <div>
+
+                    <h4>
+                        Listed Customers
+                    </h4>
+
+                    <p
+                            th:text="${summary.totalCustomers}">
+                        0
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- PAID CUSTOMERS -->
+
+            <div class="card success">
+
+                <div class="card-icon">
+                    ✅
+                </div>
+
+                <div>
+
+                    <h4>
+                        Customers Who Have Paid
+                    </h4>
+
+                    <p
+                            th:text="${summary.customersWhoHavePaid}">
+                        0
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- NOT STARTED -->
+
+            <div class="card warning">
+
+                <div class="card-icon">
+                    ⏳
+                </div>
+
+                <div>
+
+                    <h4>
+                        Yet to Start Paying
+                    </h4>
+
+                    <p
+                            th:text="${summary.customersYetToStartPaying}">
+                        0
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- PAYMENT SUMMARY -->
+    <!-- ===================================================== -->
+
+    <div class="section">
+
+        <h3>
+            Payment Overview
+        </h3>
+
+
+        <div class="dashboard-cards">
+
+
+            <!-- PENDING PAYMENTS -->
+
+            <div class="card warning">
+
+                <div class="card-icon">
+                    ⏳
+                </div>
+
+                <div>
+
+                    <h4>
+                        Pending Payments
+                    </h4>
+
+                    <p
+                            th:text="${summary.totalPendingPayments}">
+                        0
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- POSTED PAYMENTS -->
+
+            <div class="card success">
+
+                <div class="card-icon">
+                    ✅
+                </div>
+
+                <div>
+
+                    <h4>
+                        Posted Payments
+                    </h4>
+
+                    <p
+                            th:text="${summary.totalPostedPayments}">
+                        0
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- DEBT CLASSIFICATION -->
+    <!-- ===================================================== -->
+
+    <div class="section">
+
+        <h3>
+            Debt Ageing Classification
+        </h3>
+
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+
+                <tr>
+
+                    <th>
+                        Classification
+                    </th>
+
+                    <th>
+                        Days
+                    </th>
+
+                    <th>
+                        Total Debt
+                    </th>
+
+                    <th>
+                        Percentage
+                    </th>
+
+                </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                <tr
+                        th:each="c : ${summary.classificationSummary}">
+
+                    <td
+                            th:text="${c.classificationName}">
+                    </td>
+
+                    <td
+                            th:text="${c.minDaysLate}">
+                    </td>
+
+                    <td>
+
+                        KES
+
+                        <span
+                                th:text="${#numbers.formatDecimal(
+                                    c.totalAmount,
+                                    1,
+                                    'COMMA',
+                                    2,
+                                    'POINT'
+                                )}">
+                        </span>
+
+                    </td>
+
+                    <td>
+
+    <span
+            th:text="${#numbers.formatDecimal(
+                c.percentage,
+                1,
+                'COMMA',
+                2,
+                'POINT'
+            ) + '%'}">
+        0.00%
+    </span>
+
+                    </td>
+
+                </tr>
+
+
+                <tr
+                        th:if="${#lists.isEmpty(
+                            summary.classificationSummary
+                        )}">
+
+                    <td colspan="4"
+                        style="text-align:center;">
+
+                        No debt ageing data available.
+
+                    </td>
+
+                </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+</body>
+
+</html>
