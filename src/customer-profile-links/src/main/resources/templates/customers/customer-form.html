@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>New Customer</title>
+    <th:block th:replace="~{fragments/header :: header-css}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+
+<body>
+
+<div th:replace="fragments/header :: header"></div>
+
+<h2>Configure New Customer</h2>
+
+<div th:if="${success}" class="alert alert-success">
+    <span th:text="${success}"></span>
+</div>
+
+<form th:action="@{/admin/customers/save}" th:object="${customer}" method="post">
+
+    <label>Customer Code *</label>
+    <input type="text" th:field="*{customerCode}" required />
+    <small>Used to auto-map debts & payments</small>
+
+    <br/><br/>
+
+    <label>Username *</label>
+    <input type="text" th:field="*{username}" required />
+    <small>Used by customer to login to their portal</small>
+
+    <br/><br/>
+
+    <label>Business Name *</label>
+    <input type="text" th:field="*{businessName}" required />
+
+    <br/><br/>
+
+    <label>Contact Person</label>
+    <input type="text" th:field="*{contactPerson}" />
+
+    <br/><br/>
+
+    <label>Phone *</label>
+    <input type="text" th:field="*{phone}" required />
+
+    <br/><br/>
+
+    <label>Email</label>
+    <input type="email" th:field="*{email}" />
+
+    <br/><br/>
+
+    <label>Physical Location / Landmark</label>
+    <input type="text" th:field="*{location}" />
+
+    <br/><br/>
+
+    <!-- ✅ CUSTOMER UNIT -->
+    <label>Customer Unit *</label>
+    <select th:field="*{unit}" required>
+        <option value="">-- Select Unit --</option>
+        <option th:each="u : ${units}"
+                th:value="${u.id}"
+                th:text="${u.name}">
+        </option>
+    </select>
+
+    <br/><br/>
+
+    <!-- ✅ TOWN -->
+    <label>Town *</label>
+    <select th:field="*{town}" required>
+        <option value="">-- Select Town --</option>
+        <option th:each="t : ${towns}"
+                th:value="${t.id}"
+                th:text="${t.name + ' (' + t.region.name + ')'}">
+        </option>
+    </select>
+
+    <br/><br/>
+
+
+    <br/><br/>
+
+    <label>Status</label>
+    <select th:field="*{active}">
+        <option th:value="true">Active</option>
+        <option th:value="false">Inactive</option>
+    </select>
+
+    <br/><br/>
+
+    <button type="submit">Save Customer</button>
+
+</form>
+
+</body>
+</html>

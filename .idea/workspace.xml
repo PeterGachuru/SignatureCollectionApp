@@ -5,15 +5,151 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ab076043-b6c6-4048-ad5f-01378d6d85a6" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ke/co/signature/Customer/CustomerRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ke/co/signature/Customer/CustomerRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ke/co/signature/CreditSale/CreditSaleDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ke/co/signature/CreditSale/CreditSaleDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ke/co/signature/CreditSale/CreditSaleDetailsDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ke/co/signature/CreditSale/CreditSaleDetailsDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ke/co/signature/CreditSale/CreditSaleService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ke/co/signature/CreditSale/CreditSaleService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ke/co/signature/Customer/CustomerController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ke/co/signature/Customer/CustomerController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/ke/co/signature/CustomerDashboard/CustomerDashboardDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ke/co/signature/CustomerDashboard/CustomerDashboardDTO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/ke/co/signature/CustomerDashboard/CustomerDashboardService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ke/co/signature/CustomerDashboard/CustomerDashboardService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ke/co/signature/DebtAgeingUpload/DebtAgeingRecordRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ke/co/signature/DebtAgeingUpload/DebtAgeingRecordRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ke/co/signature/Payment/PaymentInProgress/PaymentInProgressRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ke/co/signature/Payment/PaymentInProgress/PaymentInProgressRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/ke/co/signature/Payment/PaymentRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ke/co/signature/Payment/PaymentRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/customer/dashboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/customer/dashboard.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ke/co/signature/PaymentProcessing/MpesaMvcController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ke/co/signature/PaymentProcessing/MpesaMvcController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/credit-sales/credit-sale-profile.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/credit-sales/credit-sale-profile.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/credit-sales/credit-sales-list.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/credit-sales/credit-sales-list.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/customers/customer-list.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/customers/customer-list.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/debt-ageing/debt-ageing-records.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/debt-ageing/debt-ageing-records.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/mpesa/mpesa-initiate.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/mpesa/mpesa-initiate.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/payments/payment-in-progress-list.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/payments/payment-in-progress-list.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/payments/payment-list.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/payments/payment-list.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Audits/LoginAudit.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Audits/LoginAuditRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Auth/Role/Role.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Auth/Role/RoleRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Auth/Role/RoleValue.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Auth/User/AdminUserController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Auth/User/AuthController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Auth/User/MyUserDetails.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Auth/User/ProfileController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Auth/User/User.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Auth/User/UserRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Auth/User/UserService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/AuthConfigs/AuthenticationEvents.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/AuthConfigs/DataInitializer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/AuthConfigs/RoleBasedAuthSuccessHandler.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/AuthConfigs/RoleLoggingFilter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/AuthConfigs/SecurityConfig.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/BaseEntity.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Configs/Bank/Bank.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Configs/Bank/BankController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Configs/Bank/BankRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Configs/ConfigurationController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Configs/ConfigurationService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Configs/CustomerUnit/CustomerUnit.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Configs/CustomerUnit/CustomerUnitRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Configs/Region/Region.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Configs/Region/RegionRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Configs/Town/Town.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Configs/Town/TownRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/CreditSale/CreditSale.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/CreditSale/CreditSaleClassificationService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/CreditSale/CreditSaleController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/CreditSale/CreditSaleDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/CreditSale/CreditSaleDetailsDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/CreditSale/CreditSaleRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/CreditSale/CreditSaleService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/CreditSale/DebtStatus.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/CustomErrorController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Customer/Customer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Customer/CustomerController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Customer/CustomerCreditDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Customer/CustomerRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Customer/CustomerService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/CustomerDashboard/CustomerAgingDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/CustomerDashboard/CustomerDashboardController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/CustomerDashboard/CustomerDashboardDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/CustomerDashboard/CustomerDashboardService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/CustomerDashboard/CustomerPaymentSummaryDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Dashboard/DashboardSummaryDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Dashboard/Dashboardservice.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Dashboard/DebtClassificationSummaryDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Dashboard/DebtClassificationTotalsDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Dashboard/HomeController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/DebtAgeingUpload/DebtAgeingController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/DebtAgeingUpload/DebtAgeingRecord.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/DebtAgeingUpload/DebtAgeingRecordDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/DebtAgeingUpload/DebtAgeingRecordRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/DebtAgeingUpload/DebtAgeingService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/DebtAgeingUpload/DebtAgeingUpload.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/DebtAgeingUpload/DebtAgeingUploadDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/DebtAgeingUpload/DebtAgeingUploadRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/DebtAgeingUpload/Util.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/DebtClassification/DebtClassification.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/DebtClassification/DebtClassificationController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/DebtClassification/DebtClassificationRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/DebtClassification/DebtClassificationService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/GenerateVoiceLikeSound.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/MpesaIntegration/CallbackPayload.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/MpesaIntegration/InitiateStkResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/MpesaIntegration/MpesaController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/MpesaIntegration/MpesaProperties.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/MpesaIntegration/MpesaService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/MpesaIntegration/MpesaTransaction.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/MpesaIntegration/MpesaTransactionRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/MpesaIntegration/OAuthResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/MpesaIntegration/StkPushRequestDto.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Payment/PaymentController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Payment/PaymentInProgress/PaymentInProgress.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Payment/PaymentInProgress/PaymentInProgressRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Payment/PaymentMode.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Payment/PaymentPostingService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Payment/PaymentRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Payment/PaymentService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Payment/PaymentSplit/PaymentSplit.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Payment/PaymentSplit/PaymentSplitDTO.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Payment/PaymentSplit/PaymentSplitRepository.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Payment/PaymentStatus.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Payment/PostedPayment.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/PaymentProcessing/MpesaMvcController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/SignatureApplication.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Utils/RequestLoggingFilter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/java/ke/co/signature/Utils/SecurityUtils.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/resources/application.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/resources/static/css/dashboard.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/resources/static/css/style.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/resources/templates/change-password.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/resources/templates/config/banks.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/resources/templates/config/config-main.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/resources/templates/config/debt/debt-classification-form.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/resources/templates/config/debt/debt-classification-list.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/resources/templates/config/regions.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/resources/templates/config/towns.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/resources/templates/config/units.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/resources/templates/credit-sales/credit-sale-form.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/resources/templates/credit-sales/credit-sale-profile.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/resources/templates/credit-sales/credit-sales-list.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/resources/templates/customer/dashboard.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/resources/templates/customers/customer-form.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/resources/templates/customers/customer-list.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/resources/templates/debt-ageing/debt-ageing-records.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/resources/templates/debt-ageing/upload-history.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/resources/templates/debt-ageing/upload.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/resources/templates/error/error.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/resources/templates/fragments/customer-modal.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/resources/templates/fragments/customer_header.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/resources/templates/fragments/flow.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/resources/templates/fragments/header.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/resources/templates/home.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/resources/templates/login.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/resources/templates/mpesa/mpesa-initiate.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/resources/templates/payments/payment-form.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/resources/templates/payments/payment-in-progress-list.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/resources/templates/payments/payment-list.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/resources/templates/profile.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/resources/templates/user-edit.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/resources/templates/user-form.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/resources/templates/user-view.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main_customer_dashboard_updated/main/resources/templates/users.html" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,16 +184,16 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultHtmlFileTemplate": "HTML File",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "android.gradle.sync.needed": "true",
-    "git-widget-placeholder": "main"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;android.gradle.sync.needed&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="SignatureApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="ke.co.signature.SignatureApplication" />

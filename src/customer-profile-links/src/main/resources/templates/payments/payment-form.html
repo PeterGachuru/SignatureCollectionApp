@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <title>Add Manual Payment</title>
+
+    <th:block th:replace="~{fragments/header :: header-css}"></th:block>
+
+    <link rel="stylesheet"
+          th:href="@{/css/style.css}" />
+
+    <style>
+
+        .form-container {
+            max-width: 750px;
+            margin: 30px auto;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        input, select {
+            padding: 9px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .customer-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .customer-row input {
+            flex: 1;
+        }
+
+        .btn {
+            padding: 9px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: #2196F3;
+            color: white;
+        }
+
+        .btn-success {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .cheque-fields {
+            display: none;
+            background: #f8f8f8;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .debt-summary {
+            background: #e8f5e9;
+            border: 1px solid #c8e6c9;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .error {
+            color: red;
+            margin-bottom: 15px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div th:replace="fragments/header :: header"></div>
+
+<div class="form-container">
+
+    <h2>Add Manual Payment</h2>
+
+    <div th:if="${error}"
+         class="error"
+         th:text="${error}">
+    </div>
+
+    <form th:action="@{/admin/payments/save}"
+          th:object="${paymentInProgress}"
+          method="post"
+          id="paymentForm">
+
+
+        <!-- CUSTOMER -->
+
+        <div class="form-group">
+
+            <label>
+                Customer *
+            </label>
+
+            <div class="customer-row">
+
+                <input type="hidden"
+                       name="customerId"
+                       id="customerId"
+                       th:value="${paymentInProgress.customer != null
+                                  ? paymentInProgress.customer.id
+                                  : ''}"/>
+
+                <input type="text"
+                       id="customerName"
+                       readonly
+                       placeholder="Select customer"
+                       th:value="${paymentInProgress.customer != null
+                                  ? paymentInProgress.customer.businessName
+                                  : ''}"/>
+
+                <button type="button"
+                        class="btn btn-primary"
+                        onclick="openCustomerModal()">
+
+                    Select Customer
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- DEBT SUMMARY -->
+
+        <div id="debtSummary"
+             class="debt-summary">
+
+            <strong>Latest Debt Ageing</strong>
+
+            <br/><br/>
+
+            Total Outstanding Debt:
+
+            <strong id="customerDebt">
+                0.00
+            </strong>
+
+        </div>
+
+
+        <!-- AMOUNT -->
+
+        <div class="form-group">
+
+            <label>
+                Amount *
+            </label>
+
+            <input type="number"
+                   name="amount"
+                   id="amount"
+                   step="0.01"
+                   min="0.01"
+                   required/>
+
+        </div>
+
+
+        <!-- PAYMENT MODE -->
+
+        <div class="form-group">
+
+            <label>
+                Payment Mode *
+            </label>
+
+            <select name="paymentMode"
+                    id="paymentMode"
+                    required
+                    onchange="paymentModeChanged()">
+
+                <option value="">
+                    -- Select Payment Mode --
+                </option>
+
+                <option th:each="m : ${paymentModes}"
+                        th:value="${m}"
+                        th:text="${m}">
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- PHONE -->
+
+        <div class="form-group"
+             id="phoneField">
+
+            <label>
+                Phone Number
+            </label>
+
+            <input type="text"
+                   name="phoneNumber"
+                   id="phoneNumber"
+                   placeholder="M-Pesa phone number"/>
+
+        </div>
+
+
+        <!-- REFERENCE -->
+
+        <div class="form-group"
+             id="referenceField">
+
+            <label>
+                Reference
+            </label>
+
+            <input type="text"
+                   name="reference"
+                   id="reference"
+                   placeholder="Payment reference"/>
+
+        </div>
+
+
+        <!-- CHEQUE -->
+
+        <div id="chequeFields"
+             class="cheque-fields">
+
+            <h3>Cheque Details</h3>
+
+            <div class="form-group">
+
+                <label>
+                    Bank *
+                </label>
+
+                <select name="bankId"
+                        id="bankId">
+
+                    <option value="">
+                        -- Select Bank --
+                    </option>
+
+                    <option th:each="bank : ${banks}"
+                            th:value="${bank.id}"
+                            th:text="${bank.name + ' (' + bank.code + ')'}">
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Cheque Number *
+                </label>
+
+                <input type="text"
+                       name="chequeNumber"
+                       id="chequeNumber"/>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>
+                    Cheque Date *
+                </label>
+
+                <input type="date"
+                       name="chequeDate"
+                       id="chequeDate"/>
+
+            </div>
+
+        </div>
+
+
+        <!-- PAYMENT DATE -->
+
+        <div class="form-group">
+
+            <label>
+                Payment Date *
+            </label>
+
+            <input type="date"
+                   name="paymentDate"
+                   id="paymentDate"
+                   th:value="${paymentInProgress.paymentDate}"/>
+
+        </div>
+
+
+        <button type="submit"
+                class="btn btn-success">
+
+            Save Payment
+
+        </button>
+
+    </form>
+
+</div>
+
+
+<script>
+
+    function paymentModeChanged() {
+
+        const mode =
+            document.getElementById("paymentMode").value;
+
+        const phoneField =
+            document.getElementById("phoneField");
+
+        const phoneNumber =
+            document.getElementById("phoneNumber");
+
+        const chequeFields =
+            document.getElementById("chequeFields");
+
+        const bank =
+            document.getElementById("bankId");
+
+        const chequeNumber =
+            document.getElementById("chequeNumber");
+
+        const chequeDate =
+            document.getElementById("chequeDate");
+
+
+        if (mode === "CHEQUE") {
+
+            /*
+             * Hide M-Pesa phone.
+             */
+            phoneField.style.display = "none";
+
+            phoneNumber.value = "";
+            phoneNumber.removeAttribute("required");
+
+
+            /*
+             * Show cheque information.
+             */
+            chequeFields.style.display = "block";
+
+            bank.setAttribute("required", "required");
+            chequeNumber.setAttribute("required", "required");
+            chequeDate.setAttribute("required", "required");
+
+        } else {
+
+            /*
+             * Hide cheque fields.
+             */
+            chequeFields.style.display = "none";
+
+            bank.removeAttribute("required");
+            chequeNumber.removeAttribute("required");
+            chequeDate.removeAttribute("required");
+
+            bank.value = "";
+            chequeNumber.value = "";
+            chequeDate.value = "";
+
+
+            /*
+             * M-Pesa gets phone field.
+             */
+            if (mode === "MPESA") {
+
+                phoneField.style.display = "block";
+
+            } else {
+
+                phoneField.style.display = "none";
+                phoneNumber.value = "";
+            }
+        }
+    }
+
+
+    function loadCustomerDebt() {
+
+        const customerId =
+            document.getElementById("customerId").value;
+
+        if (!customerId) {
+
+            document.getElementById(
+                "debtSummary"
+            ).style.display = "none";
+
+            return;
+        }
+
+
+        fetch(
+            "/admin/payments/customer/"
+            + customerId
+            + "/debt"
+        )
+        .then(response => response.json())
+        .then(data => {
+
+            const summary =
+                document.getElementById(
+                    "debtSummary"
+                );
+
+            const debt =
+                document.getElementById(
+                    "customerDebt"
+                );
+
+
+            if (data.debtAgeingRecordId == null) {
+
+                summary.style.display = "block";
+
+                debt.innerText =
+                    "No debt ageing record found";
+
+                return;
+            }
+
+
+            summary.style.display = "block";
+
+            const amount =
+                Number(data.totalDebt || 0);
+
+            debt.innerText =
+                amount.toLocaleString(
+                    undefined,
+                    {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    }
+                );
+
+
+            /*
+             * Suggest the customer's debt as the
+             * payment amount.
+             */
+            document.getElementById(
+                "amount"
+            ).value = amount;
+
+        })
+        .catch(error => {
+
+            console.error(
+                "Could not load customer debt",
+                error
+            );
+
+        });
+    }
+
+
+    /*
+     * This function should be called by the
+     * customer selection modal after selection.
+     *
+     * Your existing modal likely already sets:
+     *
+     * customerId
+     * customerName
+     *
+     * We add the debt lookup here.
+     */
+    function customerSelected() {
+        loadCustomerDebt();
+    }
+
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+            paymentModeChanged();
+
+            if (
+                document.getElementById(
+                    "customerId"
+                ).value
+            ) {
+                loadCustomerDebt();
+            }
+
+        }
+    );
+
+</script>
+
+
+<div th:replace="fragments/customer-modal :: customerModal(${customers})"></div>
+
+</body>
+
+</html>
