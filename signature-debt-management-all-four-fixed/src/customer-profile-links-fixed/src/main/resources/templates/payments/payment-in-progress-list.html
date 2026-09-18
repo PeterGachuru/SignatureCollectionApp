@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <title>Payments In Progress</title>
+
+    <th:block th:replace="~{fragments/header :: header-css}"></th:block>
+
+    <link rel="stylesheet"
+          th:href="@{/css/style.css}" />
+
+    <style>
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        th {
+            background: #f4f4f4;
+        }
+
+        tr:hover {
+            background: #f9f9f9;
+        }
+
+        input {
+            padding: 6px;
+            width: 300px;
+        }
+
+        .post-btn {
+            background: #2196F3;
+            color: white;
+            padding: 4px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+    </style>
+
+    <script>
+
+        function searchPayment() {
+
+            let filter =
+                document.getElementById(
+                    "search"
+                ).value.toLowerCase();
+
+            document.querySelectorAll(
+                ".payment-row"
+            ).forEach(row => {
+
+                row.style.display =
+                    row.innerText
+                        .toLowerCase()
+                        .includes(filter)
+                        ? ""
+                        : "none";
+
+            });
+
+        }
+
+    </script>
+
+</head>
+
+<body>
+
+<div th:replace="fragments/header :: header"></div>
+
+<h2>Payments In Progress</h2>
+
+
+<div style="
+        margin-bottom:15px;
+        display:flex;
+        justify-content:space-between;">
+
+    <input type="text"
+           id="search"
+           onkeyup="searchPayment()"
+           placeholder="Search customer, cheque, reference..." />
+
+    <a th:href="@{/admin/payments/new}"
+       class="btn btn-primary"
+       style="
+           padding:6px 12px;
+           background:#4CAF50;
+           color:white;
+           border-radius:4px;">
+
+        + Add Manual Payment
+
+    </a>
+
+</div>
+
+
+<table>
+
+    <thead>
+
+    <tr>
+
+        <th>Date</th>
+        <th>Customer</th>
+        <th>Amount</th>
+        <th>Mode</th>
+        <th>Reference</th>
+        <th>Bank</th>
+        <th>Cheque No.</th>
+        <th>Cheque Date</th>
+        <th>Status</th>
+        <th>Action</th>
+
+    </tr>
+
+    </thead>
+
+
+    <tbody>
+
+    <tr th:each="p : ${payments}"
+        class="payment-row">
+
+        <td th:text="${p.paymentDate}"></td>
+
+        <td>
+                <a th:href="@{/admin/customers/view/{customerId}(customerId=${p.customer.id})}"
+                   th:text="${p.customer.businessName}"
+                   style="font-weight:600; color:#2196F3; text-decoration:none;"></a>
+            </td>
+
+        <td th:text="${#numbers.formatDecimal(
+                p.amount,1,'COMMA',2,'POINT')}">
+        </td>
+
+        <td th:text="${p.paymentMode}"></td>
+
+        <td th:text="${p.reference}"></td>
+
+        <td th:text="${p.bank != null
+                ? p.bank.name
+                : ''}">
+        </td>
+
+        <td th:text="${p.chequeNumber}"></td>
+
+        <td th:text="${p.chequeDate}"></td>
+
+        <td th:text="${p.status}"></td>
+
+        <td>
+
+            <form th:action="@{/admin/payments/post/{id}(id=${p.id})}"
+                  method="post"
+                  th:if="${p.status.name() == 'READY_TO_POST'}">
+
+                <button type="submit"
+                        class="post-btn"
+                        onclick="return confirm('Post this payment?');">
+
+                    Post
+
+                </button>
+
+            </form>
+
+        </td>
+
+    </tr>
+
+    </tbody>
+
+</table>
+
+</body>
+
+</html>

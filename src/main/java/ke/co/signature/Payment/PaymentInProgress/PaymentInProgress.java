@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import ke.co.signature.BaseEntity;
 import ke.co.signature.Configs.Bank.Bank;
 import ke.co.signature.Customer.Customer;
+import ke.co.signature.Payment.PaymentEntrySource;
 import ke.co.signature.Payment.PaymentMode;
 import ke.co.signature.Payment.PaymentStatus;
 import lombok.Data;
@@ -47,6 +48,11 @@ public class PaymentInProgress extends BaseEntity {
 
     @Column(nullable = false)
     private LocalDate paymentDate;
+
+    /** Source of the payment entry (administrator, customer, or M-Pesa callback). */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "entry_source")
+    private PaymentEntrySource entrySource;
 
     /*
      * CHEQUE INFORMATION

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Regions</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <th:block th:replace="~{fragments/header :: header-css}"></th:block>
+</head>
+<body><div th:replace="fragments/header :: header"></div>
+
+<h2>Regions</h2>
+
+<div th:if="${success}" th:text="${success}" style="color:green;"></div>
+
+<form th:action="@{/config/regions/save}" th:object="${region}" method="post">
+    <input type="text" th:field="*{name}" placeholder="Region name" required/>
+    <button type="submit">Add Region</button>
+</form>
+
+<table>
+    <thead>
+    <tr><th>ID</th><th>Name</th></tr>
+    </thead>
+    <tbody>
+    <tr th:each="r : ${regions}">
+        <td th:text="${r.id}"></td>
+        <td th:text="${r.name}"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Customer Units</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <th:block th:replace="~{fragments/header :: header-css}"></th:block>
+</head>
+<body><div th:replace="fragments/header :: header"></div>
+
+<h2>Customer Units</h2>
+
+<div th:if="${success}" th:text="${success}" style="color:green;"></div>
+
+<form th:action="@{/config/units/save}"  th:object="${unit}" method="post">
+    <input type="text" th:field="*{name}" placeholder="Unit name" required/>
+    <button type="submit">Add Unit</button>
+</form>
+
+<table>
+    <thead>
+    <tr><th>ID</th><th>Name</th></tr>
+    </thead>
+    <tbody>
+    <tr th:each="u : ${units}">
+        <td th:text="${u.id}"></td>
+        <td th:text="${u.name}"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Error</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f9f9f9; text-align: center; padding: 50px; }
+        .error-box { background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: inline-block; }
+        h1 { font-size: 48px; color: #e74c3c; margin: 0; }
+        h2 { font-size: 24px; margin-top: 10px; color: #555; }
+        p { color: #666; }
+        a { text-decoration: none; color: #3498db; }
+    </style>
+</head>
+<body>
+<div class="error-box">
+    <h1 th:text="${status} + ' - ' + (${error} ?: 'Error')">Error</h1>
+    <h2 th:text="${message ?: 'Something went wrong!'}">Something went wrong!</h2>
+    <p th:text="${path != null ? 'Path: ' + path : ''}"></p>
+    <p th:text="${timestamp}"></p>
+    <p><a href="/">Go back to Home</a></p>
+</div>
+</body>
+</html>

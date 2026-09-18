@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit User</title>
+    <th:block th:replace="~{fragments/header :: header-css}"></th:block>
+</head>
+<body>
+
+<div th:replace="fragments/header :: header"></div>
+
+<h2>Edit User</h2>
+
+<form th:action="@{/admin/users/edit/{id}(id=${user.id})}" method="post">
+
+    <label>Username</label><br/>
+    <input type="text" name="username" th:value="${user.username}" required/>
+    <br/><br/>
+
+    <label>Role</label><br/>
+    <select id="roleId" name="roleId" required>
+        <option th:each="r : ${roles}"
+                th:value="${r.id}"
+                th:text="${r.name}"
+                th:data-role-name="${r.name}"
+                th:selected="${user.roles.contains(r)}">
+        </option>
+    </select>
+    <br/><br/>
+    <br/><br/>
+
+    <div id="regionDiv">
+
+        <label>Regions</label><br/>
+
+        <div th:each="region : ${regions}">
+            <input type="checkbox"
+                   name="regionIds"
+                   th:value="${region.id}"
+                   th:checked="${user.regions.contains(region)}"/>
+
+            <span th:text="${region.name}"></span>
+        </div>
+
+        <br/>
+    </div>
+
+    <label>
+        <input type="checkbox" name="enabled"
+               th:checked="${user.enabled}"/>
+        Enabled
+    </label>
+    <br/><br/>
+
+    <p style="color:#777;">
+        ⚠ Password cannot be edited here
+    </p>
+
+    <button type="submit">Update User</button>
+    <a href="/admin/users">Cancel</a>
+
+</form>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+
+        const roleSelect = document.getElementById("roleId");
+        const regionDiv = document.getElementById("regionDiv");
+
+        function toggleRegion() {
+
+            const selectedOption =
+                roleSelect.options[roleSelect.selectedIndex];
+
+            const roleName =
+                selectedOption.getAttribute("data-role-name");
+
+            if (roleName === "ROLE_REGIONAL_REP") {
+                regionDiv.style.display = "block";
+            } else {
+                regionDiv.style.display = "none";
+
+                document
+                    .querySelectorAll('input[name="regionIds"]')
+                    .forEach(cb => cb.checked = false);
+            }
+        }
+
+        roleSelect.addEventListener("change", toggleRegion);
+
+        toggleRegion();
+    });
+</script>
+
+</body>
+</html>

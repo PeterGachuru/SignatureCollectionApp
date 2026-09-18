@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Enter Payment</title>
+    <th:block th:replace="~{fragments/customer_header :: header-css}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <style>
+        .form-container{max-width:760px;margin:30px auto;padding:0 18px 40px}
+        .form-card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:24px;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+        .form-group{margin-bottom:18px}.form-group label{display:block;font-weight:700;margin-bottom:7px}
+        input,select{padding:10px;width:100%;box-sizing:border-box;border:1px solid #ced4da;border-radius:5px}
+        .customer-info{background:#f4f7fb;border-radius:8px;padding:14px;margin-bottom:20px}
+        .cheque-fields{display:none;background:#f8f8f8;border:1px solid #ddd;padding:15px;border-radius:6px;margin-bottom:20px}
+        .btn{padding:10px 16px;border:0;border-radius:5px;cursor:pointer;text-decoration:none;display:inline-block}
+        .btn-success{background:#198754;color:#fff}.btn-secondary{background:#6c757d;color:#fff}
+        .notice{background:#fff3cd;border:1px solid #ffe69c;padding:12px;border-radius:6px;margin-bottom:20px}
+        .error{color:#b02a37;background:#f8d7da;padding:10px;border-radius:6px;margin-bottom:15px}.success{color:#146c43;background:#d1e7dd;padding:10px;border-radius:6px;margin-bottom:15px}
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/customer_header :: header}"></div>
+<div class="form-container">
+    <div class="form-card">
+        <h2>Enter Payment</h2>
+        <p class="muted">Record a payment you have already made. An administrator must review and post it before it affects your outstanding debt.</p>
+        <div class="notice">Your submission is recorded as <strong>Customer Entered</strong>. You cannot post the transaction yourself.</div>
+        <div th:if="${error}" class="error" th:text="${error}"></div>
+        <div class="customer-info">
+            <strong th:text="${paymentInProgress.customer.businessName}">Customer</strong><br>
+            Customer Code: <span th:text="${paymentInProgress.customer.customerCode}">-</span>
+        </div>
+        <form th:action="@{/customer/payments/save}" method="post">
+            <div class="form-group">
+                <label>Amount *</label>
+                <input type="number" name="amount" step="0.01" min="0.01" required>
+            </div>
+            <div class="form-group">
+                <label>Payment Mode *</label>
+                <select name="paymentMode" id="paymentMode" required onchange="paymentModeChanged()">
+                    <option value="">-- Select Payment Mode --</option>
+                    <option th:each="m : ${paymentModes}" th:value="${m}" th:text="${m}"></option>
+                </select>
+            </div>
+            <div class="form-group" id="phoneField" style="display:none;">
+                <label>M-Pesa Phone Number *</label>
+                <input type="text" name="phoneNumber" id="phoneNumber" placeholder="07XXXXXXXX">
+            </div>
+            <div class="form-group" id="referenceField">
+                <label>Transaction Reference *</label>
+                <input type="text" name="reference" id="reference" placeholder="M-Pesa receipt / bank reference">
+            </div>
+            <div id="chequeFields" class="cheque-fields">
+                <h3>Cheque Details</h3>
+                <div class="form-group">
+                    <label>Bank *</label>
+                    <select name="bankId" id="bankId">
+                        <option value="">-- Select Bank --</option>
+                        <option th:each="bank : ${banks}" th:value="${bank.id}" th:text="${bank.name + ' (' + bank.code + ')'}"></option>
+                    </select>
+                </div>
+                <div class="form-group"><label>Cheque Number *</label><input type="text" name="chequeNumber" id="chequeNumber"></div>
+                <div class="form-group"><label>Cheque Date *</label><input type="date" name="chequeDate" id="chequeDate"></div>
+            </div>
+            <div class="form-group">
+                <label>Transaction Date *</label>
+                <input type="date" name="paymentDate" id="paymentDate" th:value="${paymentInProgress.paymentDate}" required>
+            </div>
+            <button type="submit" class="btn btn-success">Submit Payment</button>
+            <a th:href="@{/customer/payments}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+<script>
+function paymentModeChanged(){
+ const mode=document.getElementById('paymentMode').value;
+ const phone=document.getElementById('phoneField'), phoneInput=document.getElementById('phoneNumber');
+ const cheque=document.getElementById('chequeFields'), bank=document.getElementById('bankId'), no=document.getElementById('chequeNumber'), date=document.getElementById('chequeDate');
+ const ref=document.getElementById('reference'), refLabel=ref.closest('.form-group').querySelector('label');
+ if(mode==='CHEQUE'){
+   phone.style.display='none'; phoneInput.value=''; phoneInput.removeAttribute('required'); cheque.style.display='block';
+   bank.required=true; no.required=true; date.required=true; ref.required=false; refLabel.textContent='Reference';
+ }else{
+   cheque.style.display='none'; bank.required=false; no.required=false; date.required=false; bank.value=''; no.value=''; date.value='';
+   if(mode==='MPESA'){phone.style.display='block'; phoneInput.required=true;} else {phone.style.display='none'; phoneInput.value=''; phoneInput.required=false;}
+   ref.required=(mode==='MPESA' || mode==='BANK_TRANSFER');
+   refLabel.textContent=ref.required?'Transaction Reference *':'Transaction Reference';
+ }
+}
+</script>
+</body>
+</html>

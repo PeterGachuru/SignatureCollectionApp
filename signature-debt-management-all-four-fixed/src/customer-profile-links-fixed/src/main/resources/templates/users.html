@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Users</title>
+    <th:block th:replace="~{fragments/header :: header-css}"></th:block>
+</head>
+<body>
+
+<div th:replace="fragments/header :: header"></div>
+
+<h2>System Users</h2>
+
+<a href="/admin/users/new">+ New User</a>
+
+<hr/>
+
+<table border="1" cellpadding="8" cellspacing="0" width="100%">
+    <thead>
+    <tr>
+        <th>Username</th>
+        <th>Roles</th>
+        <th>Status</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr th:each="u : ${users}">
+        <td th:text="${u.username}"></td>
+
+        <td>
+            <span th:each="r, iter : ${u.roles}">
+                <span th:text="${r.name}"></span>
+                <span th:if="${!iter.last}">, </span>
+            </span>
+        </td>
+
+        <td>
+            <span th:text="${u.enabled ? 'Active' : 'Disabled'}"></span>
+        </td>
+
+        <td>
+            <a th:href="@{/admin/users/view/{id}(id=${u.id})}">View</a>
+            |
+            <a th:href="@{/admin/users/edit/{id}(id=${u.id})}">Edit</a>
+            |
+            <form th:action="@{/admin/users/delete/{id}(id=${u.id})}"
+                  method="post"
+                  style="display:inline"
+                  onsubmit="return confirm('Delete user?');">
+                <button type="submit">Delete</button>
+            </form>
+
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

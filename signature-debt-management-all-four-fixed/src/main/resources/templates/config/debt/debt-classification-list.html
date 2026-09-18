@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Debt Classifications</title>
+    <th:block th:replace="~{fragments/header :: header-css}"></th:block>
+    <style>
+        table {
+            border-collapse: collapse; /* removes double borders */
+            width: 100%;
+        }
+
+        table, th, td {
+            border: 1px solid #000; /* visible borders */
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+
+</head>
+<body>
+
+<div th:replace="fragments/header :: header"></div>
+
+<h2>Debt Classifications</h2>
+
+<a th:href="@{/config/debt-classifications/new}" class="btn btn-primary">
+    + New Classification
+</a>
+
+<table>
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Days Range</th>
+        <th>Status</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="c : ${classifications}">
+        <td th:text="${c.name}"></td>
+        <td>
+            <span th:text="${c.minDaysLate}"></span>
+            -
+            <span th:text="${c.maxDaysLate != null ? c.maxDaysLate : '∞'}"></span>
+            days
+        </td>
+        <td th:text="${c.active ? 'Active' : 'Disabled'}"></td>
+        <td>
+            <a th:href="@{/config/debt-classifications/edit/{id}(id=${c.id})}">
+                Edit
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

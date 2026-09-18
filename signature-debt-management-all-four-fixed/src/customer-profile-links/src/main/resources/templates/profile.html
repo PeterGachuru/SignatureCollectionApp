@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>My Profile</title>
+    <th:block th:replace="~{fragments/header :: header-css}"></th:block>
+</head>
+<body>
+
+<div th:replace="fragments/header :: header"></div>
+
+<h2>My Profile</h2>
+
+<div>
+    <p><strong>Username:</strong> <span th:text="${user.username}"></span></p>
+    <p><strong>Roles:</strong>
+        <span th:each="role : ${user.roles}" th:text="${role.name} + ' '"></span>
+    </p>
+    <p><strong>Enabled:</strong> <span th:text="${user.enabled}"></span></p>
+</div>
+
+<a href="/profile/change-password">Change Password</a>
+
+</body>
+</html>

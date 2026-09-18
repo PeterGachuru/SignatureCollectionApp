@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Enter Payment</title>
+    <th:block th:replace="~{fragments/customer_header :: header-css}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <style>
+        .form-container{max-width:750px;margin:30px auto;padding:0 18px 40px}.form-group{margin-bottom:18px}label{display:block;font-weight:bold;margin-bottom:6px}input,select{padding:9px;width:100%;box-sizing:border-box}.btn{padding:9px 15px;border:none;border-radius:4px;cursor:pointer}.btn-success{background:#4CAF50;color:#fff}.cheque-fields{display:none;background:#f8f8f8;border:1px solid #ddd;padding:15px;border-radius:5px;margin-bottom:20px}.notice{background:#eef6ff;border:1px solid #cfe3ff;padding:12px;border-radius:6px;margin-bottom:18px}.error{color:#b00020;margin-bottom:15px}.success{color:#176b2c;margin-bottom:15px}
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/customer_header :: header}"></div>
+<div class="form-container">
+    <h2>Enter Payment</h2>
+    <div class="notice">Enter a payment you have already made. An administrator will verify and post the transaction before it affects your account.</div>
+    <div th:if="${error}" class="error" th:text="${error}"></div>
+    <div th:if="${success}" class="success" th:text="${success}"></div>
+    <form th:action="@{/customer/payments/save}" method="post">
+        <div class="form-group"><label>Customer</label><input type="text" readonly th:value="${customer.businessName + ' (' + customer.customerCode + ')'}"/></div>
+        <div class="form-group"><label>Amount *</label><input type="number" name="amount" step="0.01" min="0.01" required/></div>
+        <div class="form-group"><label>Payment Mode *</label><select name="paymentMode" id="paymentMode" required onchange="paymentModeChanged()"><option value="">-- Select Payment Mode --</option><option th:each="m : ${paymentModes}" th:value="${m}" th:text="${m}"></option></select></div>
+        <div class="form-group" id="phoneField"><label>Phone Number</label><input type="text" name="phoneNumber" id="phoneNumber" placeholder="M-Pesa phone number"/></div>
+        <div class="form-group" id="referenceField"><label>Reference / M-Pesa Receipt</label><input type="text" name="reference" id="reference" placeholder="Payment reference or M-Pesa receipt"/></div>
+        <div id="chequeFields" class="cheque-fields">
+            <h3>Cheque Details</h3>
+            <div class="form-group"><label>Bank *</label><select name="bankId" id="bankId"><option value="">-- Select Bank --</option><option th:each="bank : ${banks}" th:value="${bank.id}" th:text="${bank.name + ' (' + bank.code + ')'}"></option></select></div>
+            <div class="form-group"><label>Cheque Number *</label><input type="text" name="chequeNumber" id="chequeNumber"/></div>
+            <div class="form-group"><label>Cheque Date *</label><input type="date" name="chequeDate" id="chequeDate"/></div>
+        </div>
+        <div class="form-group"><label>Transaction Date *</label><input type="date" name="paymentDate" id="paymentDate" th:value="${paymentInProgress.paymentDate}" required/></div>
+        <button type="submit" class="btn btn-success">Submit Payment for Posting</button>
+    </form>
+</div>
+<script>
+function paymentModeChanged(){const mode=document.getElementById('paymentMode').value;const phone=document.getElementById('phoneField');const phoneInput=document.getElementById('phoneNumber');const cheque=document.getElementById('chequeFields');const bank=document.getElementById('bankId');const chequeNo=document.getElementById('chequeNumber');const chequeDate=document.getElementById('chequeDate');if(mode==='CHEQUE'){phone.style.display='none';phoneInput.value='';cheque.style.display='block';bank.required=true;chequeNo.required=true;chequeDate.required=true;}else{phone.style.display=mode==='MPESA'?'block':'none';cheque.style.display='none';bank.required=false;chequeNo.required=false;chequeDate.required=false;bank.value='';chequeNo.value='';chequeDate.value='';}}
+paymentModeChanged();
+</script>
+</body>
+</html>
