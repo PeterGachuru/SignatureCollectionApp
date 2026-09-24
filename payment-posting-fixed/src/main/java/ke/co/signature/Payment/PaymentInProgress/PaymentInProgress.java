@@ -1,19 +1,21 @@
-package ke.co.signature.Payment;
+package ke.co.signature.Payment.PaymentInProgress;
 
 import jakarta.persistence.*;
 import ke.co.signature.BaseEntity;
 import ke.co.signature.Configs.Bank.Bank;
 import ke.co.signature.Customer.Customer;
-import ke.co.signature.Auth.User.User;
+import ke.co.signature.Payment.PaymentEntrySource;
+import ke.co.signature.Payment.PaymentMode;
+import ke.co.signature.Payment.PaymentStatus;
 import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "payments")
+@Table(name = "payments_in_progress")
 @Data
-public class PostedPayment extends BaseEntity {
+public class PaymentInProgress extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,6 +28,9 @@ public class PostedPayment extends BaseEntity {
     @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal amount;
 
+    /**
+     * M-Pesa receipt, bank reference, etc.
+     */
     private String reference;
 
     /**
@@ -37,6 +42,10 @@ public class PostedPayment extends BaseEntity {
     @Column(nullable = false)
     private PaymentMode paymentMode;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PaymentStatus status;
+
     @Column(nullable = false)
     private LocalDate paymentDate;
 
@@ -44,25 +53,6 @@ public class PostedPayment extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "entry_source")
     private PaymentEntrySource entrySource;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "varchar(20) default 'POSTED'")
-    private PostedPaymentStatus status = PostedPaymentStatus.POSTED;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reversed_by_id")
-    private User reversedBy;
-
-    private java.time.LocalDateTime reversedAt;
-
-    @Column(length = 1000)
-    private String reversalReason;
-
-    @Column(precision = 19, scale = 2)
-    private BigDecimal reversalBalanceImpact = BigDecimal.ZERO;
-
-    @Column(nullable = false, precision = 19, scale = 2)
-    private BigDecimal unallocatedAmount = BigDecimal.ZERO;
 
     /*
      * CHEQUE INFORMATION
@@ -76,17 +66,19 @@ public class PostedPayment extends BaseEntity {
 
     private LocalDate chequeDate;
 
+    private String failureReason;
+
     @PrePersist
     public void onCreate() {
 
         super.onCreate();
 
-        if (this.paymentDate == null) {
-            this.paymentDate = LocalDate.now();
+        if (paymentDate == null) {
+            paymentDate = LocalDate.now();
         }
 
-        if (this.unallocatedAmount == null) {
-            this.unallocatedAmount = BigDecimal.ZERO;
+        if (status == null) {
+            status = PaymentStatus.INITIATED;
         }
     }
 }

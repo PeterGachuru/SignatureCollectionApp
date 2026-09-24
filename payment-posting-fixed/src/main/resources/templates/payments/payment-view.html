@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Review Payment</title>
+    <th:block th:replace="~{fragments/header :: header-css}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <style>
+        .page { max-width: 1100px; margin: 25px auto; padding: 0 16px; }
+        .card { background:#fff; border:1px solid #ddd; border-radius:8px; padding:20px; margin-bottom:18px; }
+        .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; }
+        .label { font-size:12px; color:#777; text-transform:uppercase; margin-bottom:4px; }
+        .value { font-size:16px; font-weight:600; }
+        .status { display:inline-block; padding:5px 9px; border-radius:12px; background:#eee; }
+        .posted { background:#e8f5e9; color:#2e7d32; }
+        .reversed { background:#ffebee; color:#c62828; }
+        .actions { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+        .back { padding:7px 12px; background:#eee; color:#333; text-decoration:none; border-radius:4px; }
+        .review-reversal { margin-top:20px; border-top:1px solid #eee; padding-top:18px; }
+        .review-reversal summary { cursor:pointer; color:#777; font-size:13px; }
+        textarea { width:100%; min-height:90px; padding:8px; border:1px solid #ccc; border-radius:4px; box-sizing:border-box; }
+        .reverse-btn { margin-top:10px; padding:9px 14px; border:0; background:#b71c1c; color:white; border-radius:4px; cursor:pointer; }
+        table { width:100%; border-collapse:collapse; }
+        th,td { border:1px solid #ddd; padding:8px; text-align:left; }
+        th { background:#f4f4f4; }
+        .warning { padding:10px; background:#fff8e1; border-left:4px solid #ffb300; margin-top:12px; }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="page">
+    <div class="actions">
+        <h2>Review Posted Transaction</h2>
+        <a class="back" th:href="@{/admin/payments(tab='posted')}">Back to Posted Transactions</a>
+    </div>
+
+    <div class="card">
+        <div class="grid">
+            <div><div class="label">Customer</div><div class="value"><a th:href="@{/admin/customers/view/{id}(id=${payment.customer.id})}" th:text="${payment.customer.businessName}"></a></div></div>
+            <div><div class="label">Transaction Date</div><div class="value" th:text="${payment.paymentDate}"></div></div>
+            <div><div class="label">Amount</div><div class="value" th:text="${#numbers.formatDecimal(payment.amount,1,'COMMA',2,'POINT')}"></div></div>
+            <div><div class="label">Unallocated</div><div class="value" th:text="${#numbers.formatDecimal(payment.unallocatedAmount,1,'COMMA',2,'POINT')}"></div></div>
+            <div><div class="label">Payment Mode</div><div class="value" th:text="${payment.paymentMode}"></div></div>
+            <div><div class="label">Reference</div><div class="value" th:text="${payment.reference != null ? payment.reference : '-'}"></div></div>
+            <div><div class="label">Bank</div><div class="value" th:text="${payment.bank != null ? payment.bank.name : '-'}"></div></div>
+            <div><div class="label">Cheque Number</div><div class="value" th:text="${payment.chequeNumber != null ? payment.chequeNumber : '-'}"></div></div>
+            <div><div class="label">Cheque Date</div><div class="value" th:text="${payment.chequeDate != null ? payment.chequeDate : '-'}"></div></div>
+            <div><div class="label">Phone</div><div class="value" th:text="${payment.phoneNumber != null ? payment.phoneNumber : '-'}"></div></div>
+            <div><div class="label">Entered By</div><div class="value" th:text="${payment.entrySource != null ? payment.entrySource : (payment.createdBy != null ? payment.createdBy.username : '-')}"></div></div>
+            <div><div class="label">Status</div><div class="value"><span class="status" th:classappend="${payment.status.name() == 'REVERSED'} ? ' reversed' : ' posted'" th:text="${payment.status}"></span></div></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>Balance Impact / Allocation</h3>
+        <table>
+            <thead><tr><th>Debt Bucket</th><th>Amount Applied</th></tr></thead>
+            <tbody>
+            <tr th:each="split : ${splits}">
+                <td th:text="${split.bucket != null ? split.bucket : 'Legacy allocation'}"></td>
+                <td th:text="${#numbers.formatDecimal(split.amountApplied,1,'COMMA',2,'POINT')}"></td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(splits)}"><td colspan="2">No allocation splits recorded.</td></tr>
+            </tbody>
+        </table>
+        <div class="warning" th:if="${legacyAllocation}">
+            This transaction predates bucket-level allocation tracking. If reversed, its allocated balance will be restored to the Current bucket so the debt totals remain consistent.
+        </div>
+        <p th:if="${payment.status.name() == 'REVERSED'}">
+            <strong>Reversed at:</strong> <span th:text="${payment.reversedAt}"></span><br/>
+            <strong>Reversed by:</strong> <span th:text="${payment.reversedBy != null ? payment.reversedBy.username : '-'}"></span><br/>
+            <strong>Balance restored:</strong> <span th:text="${#numbers.formatDecimal(payment.reversalBalanceImpact,1,'COMMA',2,'POINT')}"></span><br/>
+            <strong>Reversal reason:</strong> <span th:text="${payment.reversalReason}"></span>
+        </p>
+    </div>
+
+    <div class="card" th:if="${payment.status.name() == 'POSTED'}">
+        <details class="review-reversal">
+            <summary>Transaction actions — reversal</summary>
+            <p style="color:#777;">Reversal is permanent from an audit perspective. The original transaction remains visible and its balance impact is restored.</p>
+            <form th:action="@{/admin/payments/reverse/{id}(id=${payment.id})}" method="post" onsubmit="return confirm('Reverse this transaction? The original transaction will remain in the audit trail.');">
+                <label for="reason"><strong>Reason for reversal</strong></label>
+                <textarea id="reason" name="reason" required="required" placeholder="Enter the reason for reversing this transaction..."></textarea>
+                <button type="submit" class="reverse-btn">Reverse Transaction</button>
+            </form>
+        </details>
+    </div>
+</div>
+</body>
+</html>

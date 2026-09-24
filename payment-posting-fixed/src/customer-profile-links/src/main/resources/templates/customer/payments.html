@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>My Payments</title>
+    <th:block th:replace="~{fragments/customer_header :: header-css}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <style>table{width:100%;border-collapse:collapse}th,td{padding:9px;border:1px solid #ddd}th{background:#f4f4f4}.container{max-width:1200px;margin:30px auto;padding:0 18px}.btn{display:inline-block;padding:9px 13px;background:#4CAF50;color:white;text-decoration:none;border-radius:4px}.status{font-weight:600}.source{font-size:12px;color:#666}</style>
+</head>
+<body>
+<div th:replace="~{fragments/customer_header :: header}"></div>
+<div class="container">
+    <div th:if="${success}" style="color:#176b2c;margin-bottom:15px" th:text="${success}"></div>
+    <div th:if="${error}" style="color:#b00020;margin-bottom:15px" th:text="${error}"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;gap:10px;flex-wrap:wrap"><div><h2 style="margin-bottom:5px">My Payments</h2><div>Payments you have submitted for administrator posting.</div></div><a class="btn" th:href="@{/customer/payments/new}">+ Enter Payment</a></div>
+    <div style="overflow-x:auto"><table><thead><tr><th>Transaction Date</th><th>Amount (KES)</th><th>Mode</th><th>Reference</th><th>Bank</th><th>Cheque No.</th><th>Cheque Date</th><th>Status</th><th>Entry</th></tr></thead><tbody>
+    <tr th:each="p : ${payments}"><td th:text="${p.paymentDate}">-</td><td th:text="${#numbers.formatDecimal(p.amount,1,'COMMA',2,'POINT')}">0.00</td><td th:text="${p.paymentMode}">-</td><td th:text="${p.reference != null ? p.reference : '-'}">-</td><td th:text="${p.bank != null ? p.bank.name : '-'}">-</td><td th:text="${p.chequeNumber != null ? p.chequeNumber : '-'}">-</td><td th:text="${p.chequeDate != null ? p.chequeDate : '-'}">-</td><td class="status" th:text="${p.status}">READY_TO_POST</td><td class="source" th:text="${p.enteredByCustomer ? 'Entered by me' : 'Entered by administrator'}">Entered by me</td></tr>
+    <tr th:if="${#lists.isEmpty(payments)}"><td colspan="9" style="text-align:center">No payments entered yet.</td></tr>
+    </tbody></table></div>
+</div>
+</body>
+</html>
