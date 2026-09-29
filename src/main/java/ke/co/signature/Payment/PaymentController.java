@@ -8,7 +8,11 @@ import ke.co.signature.DebtAgeingUpload.DebtAgeingRecordRepository;
 import ke.co.signature.DebtAgeingUpload.DebtAgeingUpload;
 import ke.co.signature.DebtAgeingUpload.DebtAgeingUploadRepository;
 import ke.co.signature.Payment.PaymentInProgress.PaymentInProgress;
+import ke.co.signature.Payment.Audit.PaymentAudit;
+import ke.co.signature.Payment.Audit.PaymentAuditRepository;
+import ke.co.signature.Payment.Audit.PaymentAuditAction;
 import ke.co.signature.Payment.PaymentInProgress.PaymentInProgressRepository;
+import ke.co.signature.Payment.Report.PaymentReportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,6 +27,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 
 @Controller
 @RequestMapping("/admin/payments")
@@ -39,6 +46,8 @@ public class PaymentController {
     private final PaymentPostingService
             paymentPostingService;
 
+    private final PaymentAuditRepository paymentAuditRepository;
+
     private final PaymentService paymentService;
 
     private final BankRepository bankRepository;
@@ -50,6 +59,8 @@ public class PaymentController {
 
     private final DebtAgeingRecordRepository
             debtAgeingRecordRepository;
+
+    private final PaymentReportService paymentReportService;
 
 
     @GetMapping
@@ -246,6 +257,97 @@ public class PaymentController {
         }
 
         return "redirect:/admin/payments/view/" + id;
+    }
+
+    /**
+     * Moves a posted transaction back to the in-progress workflow.
+     * The service restores balances first when the transaction is still POSTED;
+     * an already REVERSED transaction is moved back without another balance change.
+     */
+    @PostMapping("/unpost/{id}")
+    public String unpostPayment(
+            @PathVariable Long id,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+            paymentPostingService.unpostPayment(id);
+            redirectAttributes.addFlashAttribute(
+                    "success",
+                    "Payment unposted successfully and moved back to transactions in progress."
+            );
+            return "redirect:/admin/payments?tab=in-progress&page=0";
+        } catch (Exception ex) {
+            redirectAttributes.addFlashAttribute("error", ex.getMessage());
+            return "redirect:/admin/payments/view/" + id;
+        }
+    }
+
+    @GetMapping("/audits")
+    public String listPaymentAudits(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            Model model) {
+
+        if (page < 0) page = 0;
+        if (size != 10 && size != 20 && size != 50 && size != 100) size = 20;
+
+        Page<PaymentAudit> audits = paymentAuditRepository.findByActionOrderByActionAtDesc(
+                PaymentAuditAction.UNPOST,
+                PageRequest.of(page, size)
+        );
+
+        model.addAttribute("audits", audits);
+        model.addAttribute("size", size);
+        return "payments/payment-audit-list";
+    }
+
+    @GetMapping("/audit/{auditId}")
+    public String viewPaymentAudit(
+            @PathVariable Long auditId,
+            Model model) {
+
+        PaymentAudit audit = paymentAuditRepository.findById(auditId)
+                .orElseThrow(() -> new IllegalArgumentException("Payment audit entry not found."));
+
+        model.addAttribute("audit", audit);
+        return "payments/payment-audit-view";
+    }
+
+    @GetMapping("/reports/pending.xlsx")
+    @ResponseBody
+    public ResponseEntity<byte[]> pendingExcelReport() throws Exception {
+        byte[] bytes = paymentReportService.pendingExcel();
+        return reportResponse(bytes, "pending-payment-transactions.xlsx",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    }
+
+    @GetMapping("/reports/pending.pdf")
+    @ResponseBody
+    public ResponseEntity<byte[]> pendingPdfReport() {
+        byte[] bytes = paymentReportService.pendingPdf();
+        return reportResponse(bytes, "pending-payment-transactions.pdf", MediaType.APPLICATION_PDF_VALUE);
+    }
+
+    @GetMapping("/reports/posted.xlsx")
+    @ResponseBody
+    public ResponseEntity<byte[]> postedExcelReport() throws Exception {
+        byte[] bytes = paymentReportService.postedExcel();
+        return reportResponse(bytes, "posted-payment-transactions.xlsx",
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    }
+
+    @GetMapping("/reports/posted.pdf")
+    @ResponseBody
+    public ResponseEntity<byte[]> postedPdfReport() {
+        byte[] bytes = paymentReportService.postedPdf();
+        return reportResponse(bytes, "posted-payment-transactions.pdf", MediaType.APPLICATION_PDF_VALUE);
+    }
+
+    private ResponseEntity<byte[]> reportResponse(byte[] bytes, String filename, String contentType) {
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + filename + "\"")
+                .header(HttpHeaders.CONTENT_TYPE, contentType)
+                .body(bytes);
     }
 
     @GetMapping("/new")

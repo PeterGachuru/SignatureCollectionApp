@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Payment Audit Trail</title>
+    <th:block th:replace="~{fragments/header :: header-css}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <style>
+        .page { max-width: 1050px; margin:25px auto; padding:0 16px; }
+        .card { background:#fff; border:1px solid #ddd; border-radius:8px; padding:20px; margin-bottom:18px; }
+        .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; }
+        .label { font-size:12px; color:#777; text-transform:uppercase; margin-bottom:4px; }
+        .value { font-size:16px; font-weight:600; }
+        .badge { display:inline-block; padding:5px 9px; border-radius:12px; background:#fff3e0; color:#e65100; }
+        .back { padding:7px 12px; background:#eee; color:#333; text-decoration:none; border-radius:4px; }
+        table { width:100%; border-collapse:collapse; }
+        th,td { border:1px solid #ddd; padding:9px; text-align:left; }
+        th { background:#f4f4f4; width:240px; }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+<div class="page">
+    <div class="card">
+        <a class="back" th:href="@{/admin/payments(tab='in-progress')}">Back to Transactions In Progress</a>
+        <h2>Payment Audit Trail</h2>
+        <p><span class="badge" th:text="${audit.action}"></span></p>
+        <p>This audit entry remains available even though the original posted transaction was removed.</p>
+    </div>
+
+    <div class="card">
+        <table>
+            <tr><th>Audit ID</th><td th:text="${audit.id}"></td></tr>
+            <tr><th>Original Posted Transaction ID</th><td th:text="${audit.originalPaymentId}"></td></tr>
+            <tr><th>Returned Transaction ID</th><td th:text="${audit.paymentInProgressId}"></td></tr>
+            <tr><th>Customer</th><td th:text="${audit.customer != null ? audit.customer.businessName : '-'}"></td></tr>
+            <tr><th>Transaction Date</th><td th:text="${audit.paymentDate}"></td></tr>
+            <tr><th>Amount</th><td th:text="${#numbers.formatDecimal(audit.amount,1,'COMMA',2,'POINT')}"></td></tr>
+            <tr><th>Payment Mode</th><td th:text="${audit.paymentMode}"></td></tr>
+            <tr><th>Reference</th><td th:text="${audit.reference != null ? audit.reference : '-'}"></td></tr>
+            <tr><th>Status Before Unpost</th><td th:text="${audit.statusBefore}"></td></tr>
+            <tr><th>Balance Restored</th><td th:text="${#numbers.formatDecimal(audit.balanceImpact,1,'COMMA',2,'POINT')}"></td></tr>
+            <tr><th>Unposted By</th><td th:text="${audit.actionBy != null ? audit.actionBy.username : '-'}"></td></tr>
+            <tr><th>Unposted At</th><td th:text="${audit.actionAt}"></td></tr>
+            <tr><th>Details</th><td th:text="${audit.details}"></td></tr>
+        </table>
+    </div>
+</div>
+</body>
+</html>

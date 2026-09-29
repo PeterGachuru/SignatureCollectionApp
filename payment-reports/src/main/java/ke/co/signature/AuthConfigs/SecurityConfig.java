@@ -50,6 +50,7 @@ public class SecurityConfig {
                                 .requestMatchers("/admin/users", "/admin/users/**").hasAnyRole("ADMIN")
                         .requestMatchers("/admin/payments/post/**").hasRole("ADMIN")
                         .requestMatchers("/admin/payments/reverse/**").hasRole("ADMIN")
+                        .requestMatchers("/admin/payments/unpost/**").hasRole("ADMIN")
                         .requestMatchers("/admin/**").hasAnyRole("ADMIN", "REGIONAL_REP")
 //                        .requestMatchers("/admin/**").permitAll()
                         .anyRequest().authenticated()

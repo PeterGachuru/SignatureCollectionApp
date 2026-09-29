@@ -19,6 +19,8 @@
         .review-reversal summary { cursor:pointer; color:#777; font-size:13px; }
         textarea { width:100%; min-height:90px; padding:8px; border:1px solid #ccc; border-radius:4px; box-sizing:border-box; }
         .reverse-btn { margin-top:10px; padding:9px 14px; border:0; background:#b71c1c; color:white; border-radius:4px; cursor:pointer; }
+        .unpost-btn { margin-top:10px; padding:9px 14px; border:0; background:#1565c0; color:white; border-radius:4px; cursor:pointer; }
+        .action-note { color:#777; font-size:13px; }
         table { width:100%; border-collapse:collapse; }
         th,td { border:1px solid #ddd; padding:8px; text-align:left; }
         th { background:#f4f4f4; }
@@ -29,6 +31,8 @@
 <div th:replace="~{fragments/header :: header}"></div>
 
 <div class="page">
+    <div th:if="${success}" style="padding:12px; margin-bottom:15px; background:#e8f5e9; color:#2e7d32; border:1px solid #c8e6c9; border-radius:4px;" th:text="${success}"></div>
+    <div th:if="${error}" style="padding:12px; margin-bottom:15px; background:#ffebee; color:#c62828; border:1px solid #ffcdd2; border-radius:4px;" th:text="${error}"></div>
     <div class="actions">
         <h2>Review Posted Transaction</h2>
         <a class="back" th:href="@{/admin/payments(tab='posted')}">Back to Posted Transactions</a>
@@ -74,15 +78,27 @@
         </p>
     </div>
 
-    <div class="card" th:if="${payment.status.name() == 'POSTED'}">
+    <div class="card">
         <details class="review-reversal">
-            <summary>Transaction actions — reversal</summary>
-            <p style="color:#777;">Reversal is permanent from an audit perspective. The original transaction remains visible and its balance impact is restored.</p>
-            <form th:action="@{/admin/payments/reverse/{id}(id=${payment.id})}" method="post" onsubmit="return confirm('Reverse this transaction? The original transaction will remain in the audit trail.');">
-                <label for="reason"><strong>Reason for reversal</strong></label>
-                <textarea id="reason" name="reason" required="required" placeholder="Enter the reason for reversing this transaction..."></textarea>
-                <button type="submit" class="reverse-btn">Reverse Transaction</button>
-            </form>
+            <summary>Transaction actions</summary>
+
+            <div th:if="${payment.status.name() == 'POSTED'}">
+                <p style="color:#777;">Reversal keeps the original transaction in the audit trail and restores its balance impact.</p>
+                <form th:action="@{/admin/payments/reverse/{id}(id=${payment.id})}" method="post" onsubmit="return confirm('Reverse this transaction? The original transaction will remain in the audit trail.');">
+                    <label for="reason"><strong>Reason for reversal</strong></label>
+                    <textarea id="reason" name="reason" required="required" placeholder="Enter the reason for reversing this transaction..."></textarea>
+                    <button type="submit" class="reverse-btn">Reverse Transaction</button>
+                </form>
+            </div>
+
+            <div style="margin-top:18px; padding-top:18px; border-top:1px solid #eee;">
+                <p style="color:#777;">Unpost removes the transaction from Posted Transactions and returns it to Transactions In Progress. A permanent audit record is created and the returned transaction is marked as UNPOSTED.</p>
+                <p th:if="${payment.status.name() == 'REVERSED'}" style="color:#777;">This transaction is already reversed, so unposting will not change the balances again.</p>
+                <form th:action="@{/admin/payments/unpost/{id}(id=${payment.id})}" method="post"
+                      onsubmit="return confirm('Unpost this transaction? It will be removed from Posted Transactions and returned to Transactions In Progress.');">
+                    <button type="submit" class="unpost-btn">Unpost Transaction</button>
+                </form>
+            </div>
         </details>
     </div>
 </div>

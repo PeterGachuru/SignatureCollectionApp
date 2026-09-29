@@ -100,17 +100,21 @@
            onkeyup="searchPayment()"
            placeholder="Search customer, cheque, reference..." />
 
-    <a th:href="@{/admin/payments/new}"
-       class="btn btn-primary"
-       style="
-           padding:6px 12px;
-           background:#4CAF50;
-           color:white;
-           border-radius:4px;">
-
-        + Add Manual Payment
-
-    </a>
+    <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+        <a th:href="@{/admin/payments/reports/pending.xlsx}"
+           style="padding:6px 12px; background:#217346; color:white; border-radius:4px; text-decoration:none;">
+            Excel - All Pending
+        </a>
+        <a th:href="@{/admin/payments/reports/pending.pdf}"
+           style="padding:6px 12px; background:#b71c1c; color:white; border-radius:4px; text-decoration:none;">
+            PDF - All Pending
+        </a>
+        <a th:href="@{/admin/payments/new}"
+           class="btn btn-primary"
+           style="padding:6px 12px; background:#4CAF50; color:white; border-radius:4px;">
+            + Add Manual Payment
+        </a>
+    </div>
 
 </div>
 
@@ -131,6 +135,7 @@
         <th>Cheque Date</th>
         <th>Entered By</th>
         <th>Status</th>
+        <th>Origin</th>
         <th>Action</th>
 
     </tr>
@@ -171,6 +176,15 @@
         <td th:text="${p.entrySource != null ? p.entrySource : (p.createdBy != null ? p.createdBy.username : '-')}"></td>
 
         <td th:text="${p.status}"></td>
+
+        <td>
+            <span th:if="${p.unpostAuditId != null}"
+                  style="display:inline-block; padding:4px 8px; background:#fff3e0; color:#e65100; border-radius:12px; font-weight:600;">UNPOSTED</span>
+            <a th:if="${p.unpostAuditId != null}"
+               th:href="@{/admin/payments/audit/{id}(id=${p.unpostAuditId})}"
+               style="margin-left:6px;">Audit</a>
+            <span th:if="${p.unpostAuditId == null}" style="color:#777;">-</span>
+        </td>
 
         <td>
 

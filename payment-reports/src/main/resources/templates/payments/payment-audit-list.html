@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Payment Audit Trail</title>
+    <th:block th:replace="~{fragments/header :: header-css}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <style>
+        .page { max-width:1200px; margin:25px auto; padding:0 16px; }
+        .card { background:#fff; border:1px solid #ddd; border-radius:8px; padding:18px; }
+        table { width:100%; border-collapse:collapse; }
+        th,td { border:1px solid #ddd; padding:8px; text-align:left; }
+        th { background:#f4f4f4; }
+        .badge { display:inline-block; padding:4px 8px; background:#fff3e0; color:#e65100; border-radius:12px; font-weight:600; }
+        .review { padding:5px 9px; background:#2196F3; color:#fff; border-radius:4px; text-decoration:none; }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+<div class="page">
+    <div class="card">
+        <h2>Payment Audit Trail</h2>
+        <p>Permanent audit records for transactions that were unposted from Posted Transactions.</p>
+
+        <table>
+            <thead>
+            <tr>
+                <th>Audit ID</th>
+                <th>Unposted At</th>
+                <th>Customer</th>
+                <th>Amount</th>
+                <th>Mode</th>
+                <th>Reference</th>
+                <th>Status Before</th>
+                <th>Balance Restored</th>
+                <th>Unposted By</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="a : ${audits.content}">
+                <td th:text="${a.id}"></td>
+                <td th:text="${a.actionAt}"></td>
+                <td th:text="${a.customer != null ? a.customer.businessName : '-'}"></td>
+                <td th:text="${#numbers.formatDecimal(a.amount,1,'COMMA',2,'POINT')}"></td>
+                <td th:text="${a.paymentMode}"></td>
+                <td th:text="${a.reference != null ? a.reference : '-'}"></td>
+                <td><span class="badge" th:text="${a.statusBefore}"></span></td>
+                <td th:text="${#numbers.formatDecimal(a.balanceImpact,1,'COMMA',2,'POINT')}"></td>
+                <td th:text="${a.actionBy != null ? a.actionBy.username : '-'}"></td>
+                <td><a class="review" th:href="@{/admin/payments/audit/{id}(id=${a.id})}">View</a></td>
+            </tr>
+            <tr th:if="${audits.empty}">
+                <td colspan="10">No unpost audit records found.</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

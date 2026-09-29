@@ -163,6 +163,10 @@
 <!-- TABS -->
 <!-- ========================= -->
 
+<div style="margin:12px 0;">
+    <a th:href="@{/admin/payments/audits}" style="padding:7px 12px; background:#607D8B; color:#fff; border-radius:4px; text-decoration:none;">Unpost Audit Trail</a>
+</div>
+
 <div class="tabs">
 
     <a th:href="@{/admin/payments(
@@ -241,12 +245,36 @@
     </form>
 
 
-    <a th:href="@{/admin/payments/new}"
-       class="add-button">
-
-        + Add Manual Payment
-
-    </a>
+    <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+        <a th:if="${activeTab == 'in-progress'}"
+           th:href="@{/admin/payments/reports/pending.xlsx}"
+           class="clear-button"
+           style="background:#217346; color:#fff; border-color:#217346;">
+            Excel - All Pending
+        </a>
+        <a th:if="${activeTab == 'in-progress'}"
+           th:href="@{/admin/payments/reports/pending.pdf}"
+           class="clear-button"
+           style="background:#b71c1c; color:#fff; border-color:#b71c1c;">
+            PDF - All Pending
+        </a>
+        <a th:if="${activeTab == 'posted'}"
+           th:href="@{/admin/payments/reports/posted.xlsx}"
+           class="clear-button"
+           style="background:#217346; color:#fff; border-color:#217346;">
+            Excel - All Posted
+        </a>
+        <a th:if="${activeTab == 'posted'}"
+           th:href="@{/admin/payments/reports/posted.pdf}"
+           class="clear-button"
+           style="background:#b71c1c; color:#fff; border-color:#b71c1c;">
+            PDF - All Posted
+        </a>
+        <a th:href="@{/admin/payments/new}"
+           class="add-button">
+            + Add Manual Payment
+        </a>
+    </div>
 
 </div>
 
@@ -272,6 +300,8 @@
             <th>Cheque No.</th>
             <th>Cheque Date</th>
             <th>Entered By</th>
+            <th>Status</th>
+            <th>Origin</th>
             <th>Action</th>
 
         </tr>
@@ -313,7 +343,19 @@
             <td th:text="${p.chequeDate}"></td>
 
             <td th:text="${p.entrySource != null ? p.entrySource : (p.createdBy != null ? p.createdBy.username : '-')}"></td>
-            <td th:text="${p.status}"></td>
+            <td>
+                <span th:text="${p.status}"></span>
+            </td>
+            <td>
+                <span th:if="${p.unpostAuditId != null}"
+                      style="display:inline-block; padding:4px 8px; background:#fff3e0; color:#e65100; border-radius:12px; font-weight:600;">
+                    UNPOSTED
+                </span>
+                <a th:if="${p.unpostAuditId != null}"
+                   th:href="@{/admin/payments/audit/{id}(id=${p.unpostAuditId})}"
+                   style="margin-left:6px;">Audit</a>
+                <span th:if="${p.unpostAuditId == null}" style="color:#777;">-</span>
+            </td>
             <td>
                 <a th:href="@{/admin/payments/view/{id}(id=${p.id})}"
                    style="padding:5px 9px; background:#2196F3; color:#fff; border-radius:4px; text-decoration:none;">
@@ -347,7 +389,7 @@
 
         <tr th:if="${inProgressPayments.empty}">
 
-            <td colspan="12"
+            <td colspan="13"
                 style="text-align:center;">
 
                 No in-progress payments found.
@@ -563,7 +605,9 @@
 
             <td th:text="${p.chequeDate}"></td>
             <td th:text="${p.entrySource != null ? p.entrySource : (p.createdBy != null ? p.createdBy.username : '-')}"></td>
-            <td th:text="${p.status}"></td>
+            <td>
+                <span th:text="${p.status}"></span>
+            </td>
             <td>
                 <a th:href="@{/admin/payments/view/{id}(id=${p.id})}"
                    style="padding:5px 9px; background:#2196F3; color:#fff; border-radius:4px; text-decoration:none;">

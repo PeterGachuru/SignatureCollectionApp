@@ -12,6 +12,9 @@ import ke.co.signature.Payment.PaymentInProgress.PaymentInProgress;
 import ke.co.signature.Payment.PaymentInProgress.PaymentInProgressRepository;
 import ke.co.signature.Payment.PaymentSplit.PaymentSplit;
 import ke.co.signature.Payment.PaymentSplit.PaymentSplitRepository;
+import ke.co.signature.Payment.Audit.PaymentAudit;
+import ke.co.signature.Payment.Audit.PaymentAuditAction;
+import ke.co.signature.Payment.Audit.PaymentAuditRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +39,7 @@ public class PaymentPostingService {
 
     private final DebtAgeingUploadRepository debtAgeingUploadRepository;
     private final DebtAgeingRecordRepository debtAgeingRecordRepository;
+    private final PaymentAuditRepository paymentAuditRepository;
 
 
     /**
@@ -286,6 +290,137 @@ public class PaymentPostingService {
             payment.setReversalReason(reason.trim() + " [Legacy allocation restored to Current bucket]");
         }
         paymentRepository.save(payment);
+    }
+
+    /**
+     * Unposts a posted payment and returns it to the in-progress workflow.
+     *
+     * For an active POSTED payment, the balance impact is first reversed in
+     * exactly the same way as a normal reversal. The posted payment and its
+     * allocation splits are then deleted and a READY_TO_POST in-progress
+     * payment is recreated.
+     *
+     * For an already REVERSED payment, the balances have already been restored,
+     * so no additional balance movement is performed. The payment is simply
+     * moved back to in-progress.
+     */
+    @Transactional
+    public void unpostPayment(Long paymentId) {
+
+        PostedPayment payment = paymentRepository.findById(paymentId)
+                .orElseThrow(() -> new IllegalArgumentException("Posted payment not found."));
+
+        List<PaymentSplit> splits = paymentSplitRepository.findByPostedPaymentId(paymentId);
+
+        // An active payment has not yet had its balance impact restored.
+        // Restore each allocation before moving it back to in-progress.
+        if (payment.getStatus() == PostedPaymentStatus.POSTED) {
+            if (splits.isEmpty()
+                    && safe(payment.getAmount()).compareTo(BigDecimal.ZERO) > 0
+                    && safe(payment.getUnallocatedAmount()).compareTo(safe(payment.getAmount())) != 0) {
+                throw new IllegalStateException(
+                        "This payment has no allocation history and cannot be safely unposted."
+                );
+            }
+
+            restorePaymentBalances(splits);
+        } else if (payment.getStatus() != PostedPaymentStatus.REVERSED) {
+            throw new IllegalStateException("This payment cannot be unposted from its current status.");
+        }
+
+        // Capture the audit before the posted transaction is deleted.
+        String statusBefore = payment.getStatus() == null ? null : payment.getStatus().name();
+        BigDecimal balanceImpact = payment.getStatus() == PostedPaymentStatus.REVERSED
+                ? BigDecimal.ZERO
+                : splits.stream()
+                    .map(split -> safe(split.getAmountApplied()))
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        PaymentAudit audit = new PaymentAudit();
+        audit.setAction(PaymentAuditAction.UNPOST);
+        audit.setOriginalPaymentId(payment.getId());
+        audit.setCustomer(payment.getCustomer());
+        audit.setAmount(payment.getAmount());
+        audit.setReference(payment.getReference());
+        audit.setPaymentMode(payment.getPaymentMode());
+        audit.setPaymentDate(payment.getPaymentDate());
+        audit.setStatusBefore(statusBefore);
+        audit.setBalanceImpact(balanceImpact);
+        audit.setActionBy(SecurityUtils.getCurrentUser());
+        audit.setActionAt(LocalDateTime.now());
+        audit.setDetails(
+                payment.getStatus() == PostedPaymentStatus.REVERSED
+                        ? "Unposted an already reversed payment; no additional balance change was made."
+                        : "Unposted a posted payment; its allocation was restored to the debt ageing balances."
+        );
+        audit = paymentAuditRepository.saveAndFlush(audit);
+
+        // Recreate the original transaction in the in-progress workflow.
+        PaymentInProgress pip = new PaymentInProgress();
+        pip.setCustomer(payment.getCustomer());
+        pip.setAmount(payment.getAmount());
+        pip.setReference(payment.getReference());
+        pip.setPhoneNumber(payment.getPhoneNumber());
+        pip.setPaymentMode(payment.getPaymentMode());
+        pip.setPaymentDate(payment.getPaymentDate());
+        pip.setBank(payment.getBank());
+        pip.setChequeNumber(payment.getChequeNumber());
+        pip.setChequeDate(payment.getChequeDate());
+        pip.setEntrySource(payment.getEntrySource());
+        pip.setStatus(PaymentStatus.READY_TO_POST);
+        pip.setUnpostAuditId(audit.getId());
+        pip.setUnpostedAt(audit.getActionAt());
+        pip.setUnpostedBy(audit.getActionBy());
+
+        pip = inProgressRepository.saveAndFlush(pip);
+        audit.setPaymentInProgressId(pip.getId());
+        paymentAuditRepository.saveAndFlush(audit);
+
+        // Remove allocation history first, then the posted transaction.
+        // This guarantees the foreign-key relationship remains valid.
+        if (!splits.isEmpty()) {
+            paymentSplitRepository.deleteAll(splits);
+            paymentSplitRepository.flush();
+        }
+
+        paymentRepository.delete(payment);
+        paymentRepository.flush();
+    }
+
+    /**
+     * Restores all balance impact represented by a payment's allocation splits.
+     * Legacy splits without a bucket are restored to Current, matching the
+     * existing reversal behaviour.
+     */
+    private void restorePaymentBalances(List<PaymentSplit> splits) {
+        for (PaymentSplit split : splits) {
+            BigDecimal applied = safe(split.getAmountApplied());
+            if (applied.compareTo(BigDecimal.ZERO) <= 0) {
+                continue;
+            }
+
+            DebtAgeingRecord record = split.getDebtAgeingRecord();
+
+            if (split.getBucket() == null) {
+                BigDecimal current = safe(record.getCurrentAmount());
+                record.setCurrentAmount(current.add(applied));
+            } else {
+                BigDecimal bucketAmount = getBucketAmount(record, split.getBucket());
+                setBucketAmount(record, split.getBucket(), safe(bucketAmount).add(applied));
+            }
+
+            record.setTotalDebt(safe(record.getTotalDebt()).add(applied));
+            debtAgeingRecordRepository.save(record);
+
+            DebtAgeingUpload upload = record.getUpload();
+            if (upload != null) {
+                upload.setTotalDebt(safe(upload.getTotalDebt()).add(applied));
+                debtAgeingUploadRepository.save(upload);
+            }
+        }
+
+        debtAgeingRecordRepository.flush();
+        debtAgeingUploadRepository.flush();
     }
 
     @Transactional(readOnly = true)

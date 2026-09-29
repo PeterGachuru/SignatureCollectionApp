@@ -11,6 +11,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "payments_in_progress")
@@ -67,6 +68,18 @@ public class PaymentInProgress extends BaseEntity {
     private LocalDate chequeDate;
 
     private String failureReason;
+
+    /**
+     * Set when this transaction was returned from Posted Transactions by an unpost.
+     * It makes the returned transaction identifiable and links it to its audit trail.
+     */
+    private Long unpostAuditId;
+
+    private LocalDateTime unpostedAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "unposted_by_id")
+    private ke.co.signature.Auth.User.User unpostedBy;
 
     @PrePersist
     public void onCreate() {
